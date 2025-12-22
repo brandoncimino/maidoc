@@ -1,0 +1,101 @@
+[gd_scene load_steps=9 format=3 uid="uid://x1upoyfhm8fj"]
+
+[ext_resource type="Script" uid="uid://1b66m0h2hoyk" path="res://Scenes/GameComponents/CardView.cs" id="1_45bq5"]
+[ext_resource type="Shape2D" uid="uid://cpyuprxwtc0xq" path="res://rectangle_1meter.tres" id="1_h8wm0"]
+[ext_resource type="Texture2D" uid="uid://bknt8joo10j57" path="res://Sprites/normal_monster.png" id="2_3m7nw"]
+[ext_resource type="Texture2D" uid="uid://c1oaqpv0lxr35" path="res://Sprites/Blue-Eyes White Dragon.png" id="2_kphy1"]
+[ext_resource type="Script" uid="uid://bo6kwxn6xcj7o" path="res://Scenes/GameComponents/GameSprite.cs" id="3_kphy1"]
+[ext_resource type="Theme" uid="uid://bywjs6djlrs31" path="res://Scenes/GameComponents/Card.tres" id="7_gcjpo"]
+[ext_resource type="Texture2D" uid="uid://yp02qssscnss" path="res://Sprites/card_back.png" id="7_l2em0"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_gcjpo"]
+
+[node name="Card" type="Area2D"]
+script = ExtResource("1_45bq5")
+MaximumFontSizeInMeters = 0.05
+
+[node name="ClickBox" type="CollisionShape2D" parent="."]
+scale = Vector2(0.71428573, 1)
+shape = ExtResource("1_h8wm0")
+
+[node name="Art" type="Node2D" parent="."]
+visible = false
+position = Vector2(0, 2)
+scale = Vector2(0.54, 0.54)
+
+[node name="Sprite2D" type="Sprite2D" parent="Art"]
+scale = Vector2(1.25, 1.25)
+texture = ExtResource("2_kphy1")
+script = ExtResource("3_kphy1")
+
+[node name="Frame" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(0.6613757, 0.6756757)
+texture = ExtResource("2_3m7nw")
+
+[node name="Face" type="Control" parent="."]
+custom_minimum_size = Vector2(71.42857, 100)
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = -35.714287
+offset_top = -50.0
+offset_right = 35.714287
+offset_bottom = 50.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Background" type="TextureRect" parent="Face"]
+custom_minimum_size = Vector2(71.42857, 100)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("7_l2em0")
+expand_mode = 1
+
+[node name="NameBox" type="TextureRect" parent="Face"]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = -80.0
+texture = ExtResource("7_l2em0")
+expand_mode = 1
+
+[node name="Name" type="Label" parent="Face/NameBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -4.0
+offset_right = -27.97297
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Blue"
+label_settings = SubResource("LabelSettings_gcjpo")
+
+[node name="Text" type="RichTextLabel" parent="Face"]
+custom_minimum_size = Vector2(61.42857, 85)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = 10.0
+offset_right = -5.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("7_gcjpo")
+theme_override_constants/outline_size = 1
+bbcode_enabled = true
+text = "This legendary dragon is a powerful engine of destruction. Virtually invincible, very few have faced this awesome creature and lived to tell the tale."
+scroll_active = false
+autowrap_mode = 2

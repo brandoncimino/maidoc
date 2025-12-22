@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddxppf0133mg8"]
+
+[ext_resource type="Script" uid="uid://df2ft6eglvoyb" path="res://Scenes/UI/DebugMenu.cs" id="1_abryh"]
+
+[node name="DebugMenu" type="PanelContainer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_abryh")
+
+[node name="HFlowContainer" type="HFlowContainer" parent="."]
+layout_mode = 2

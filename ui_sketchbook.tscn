@@ -1,0 +1,116 @@
+[gd_scene load_steps=6 format=3 uid="uid://c5rothuty60rn"]
+
+[ext_resource type="Script" uid="uid://c4sjml8rcj1l1" path="res://Scenes/GameComponents/TextTools.cs" id="1_2dfqk"]
+[ext_resource type="Script" uid="uid://difx3h1uml76f" path="res://Scenes/GameComponents/RichTextTools.cs" id="2_wmjlu"]
+[ext_resource type="Texture2D" uid="uid://dyd8lwo0ciulk" path="res://Sprites/box_64x64.png" id="3_ef8lo"]
+
+[sub_resource type="SystemFont" id="SystemFont_2dfqk"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_2dfqk"]
+font = SubResource("SystemFont_2dfqk")
+
+[node name="UiSketchbook" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1132.0
+offset_bottom = -3.0599976
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AllowedBox" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 100.0
+offset_bottom = 100.0
+
+[node name="PanelContainer" type="PanelContainer" parent="AllowedBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="AllowedBox/PanelContainer"]
+visible = false
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+text = "This legendary dragon is a powerful engine of destruction. Virtually invincible, very few have faced this awesome creature and lived to tell the tale."
+label_settings = SubResource("LabelSettings_2dfqk")
+autowrap_mode = 2
+clip_text = true
+script = ExtResource("1_2dfqk")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="AllowedBox/PanelContainer"]
+layout_mode = 2
+text = "This legendary dragon is a powerful engine of destruction. Virtually invincible, very few have faced this awesome creature and lived to tell the tale."
+scroll_active = false
+script = ExtResource("2_wmjlu")
+
+[node name="AnchorBox" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 197.0
+offset_top = 19.0
+offset_right = 237.0
+offset_bottom = 59.0
+
+[node name="Background" type="Panel" parent="AnchorBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -67.0
+offset_top = 12.0
+offset_right = -7.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="AnchorBox/Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel2" type="Panel" parent="AnchorBox/Background"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 103.0
+offset_top = -64.0
+offset_right = 143.0
+offset_bottom = -24.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_wmjlu")
+
+[node name="TextureRect" type="TextureRect" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_ef8lo")
+expand_mode = 1

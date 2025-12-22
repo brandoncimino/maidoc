@@ -1,0 +1,27 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "maidoc", "maidoc.csproj", "{6C64A154-4DD9-4410-B4CE-27E2F187A3C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "maidoc.Tests", "..\maidoc.Tests\maidoc.Tests.csproj", "{FE5FE180-3553-4D96-B406-7D275ABA0582}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C64A154-4DD9-4410-B4CE-27E2F187A3C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C64A154-4DD9-4410-B4CE-27E2F187A3C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C64A154-4DD9-4410-B4CE-27E2F187A3C2}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{6C64A154-4DD9-4410-B4CE-27E2F187A3C2}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{6C64A154-4DD9-4410-B4CE-27E2F187A3C2}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{6C64A154-4DD9-4410-B4CE-27E2F187A3C2}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{FE5FE180-3553-4D96-B406-7D275ABA0582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE5FE180-3553-4D96-B406-7D275ABA0582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE5FE180-3553-4D96-B406-7D275ABA0582}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE5FE180-3553-4D96-B406-7D275ABA0582}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{FE5FE180-3553-4D96-B406-7D275ABA0582}.ExportRelease|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE5FE180-3553-4D96-B406-7D275ABA0582}.ExportRelease|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+EndGlobal

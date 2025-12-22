@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://denqo83hlx72i"]
+
+[ext_resource type="Script" uid="uid://ct0rsrb8x0bd3" path="res://Scenes/GameComponents/CellView.cs" id="1_rd428"]
+[ext_resource type="Shape2D" uid="uid://cpyuprxwtc0xq" path="res://rectangle_1meter.tres" id="2_60yta"]
+[ext_resource type="Texture2D" uid="uid://dyd8lwo0ciulk" path="res://Sprites/box_64x64.png" id="2_g6ws7"]
+[ext_resource type="Script" uid="uid://bo6kwxn6xcj7o" path="res://Scenes/GameComponents/GameSprite.cs" id="3_60yta"]
+
+[node name="Cell" type="Area2D"]
+script = ExtResource("1_rd428")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = ExtResource("2_60yta")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(1.5625, 1.5625)
+texture = ExtResource("2_g6ws7")
+script = ExtResource("3_60yta")

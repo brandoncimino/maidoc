@@ -1,0 +1,7 @@
+= Godot Notes
+
+
+The ruler in the 2D view displays *world coordinates*.
+However, it's very difficult to see - it's easier to use ``Marker2D``s.
+
+When "quick import" a PNG for a `Sprite2D`, it will have a *world size* equal to its sprite dimensions.

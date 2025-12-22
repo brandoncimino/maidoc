@@ -1,0 +1,14 @@
+[gd_scene load_steps=6 format=3 uid="uid://c2igwruopjay7"]
+
+[ext_resource type="Script" uid="uid://bys8tard4tcq2" path="res://Scenes/DuelRunner.cs" id="1_cf43x"]
+[ext_resource type="PackedScene" uid="uid://c4dgkn487ooal" path="res://Scenes/UI/godot_player_interface.tscn" id="2_p06o5"]
+[ext_resource type="PackedScene" uid="uid://c24yck01s7c4y" path="res://Scenes/GameComponents/Board.tscn" id="3_geurv"]
+[ext_resource type="PackedScene" uid="uid://x1upoyfhm8fj" path="res://Scenes/GameComponents/Card.tscn" id="4_geurv"]
+[ext_resource type="PackedScene" uid="uid://eylv1o6xsjvj" path="res://Scenes/GameComponents/Hand.tscn" id="5_oehe7"]
+
+[node name="DuelRunner" type="Node2D"]
+script = ExtResource("1_cf43x")
+PlayerInterfaceScene = ExtResource("2_p06o5")
+BoardScene = ExtResource("3_geurv")
+CardScene = ExtResource("4_geurv")
+HandScene = ExtResource("5_oehe7")

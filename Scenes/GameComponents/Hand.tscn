@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://eylv1o6xsjvj"]
+
+[ext_resource type="Script" uid="uid://fwc80vgeafrl" path="res://Scenes/GameComponents/HandView.cs" id="1_x74kv"]
+
+[node name="Hand" type="Node2D"]
+script = ExtResource("1_x74kv")
