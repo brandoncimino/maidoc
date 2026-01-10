@@ -6,7 +6,7 @@ using maidoc.Core;
 
 namespace maidoc.Scenes;
 
-public partial class CellView : Area2D, ISceneRoot<CellView, (BoardCell, Action<BoardCell>)> {
+public partial class CellView : Area2D, ISceneRoot<CellView, CellView.SpawnInput> {
     private readonly Disenfranchised<BoardCell>         _model      = new();
     private readonly Disenfranchised<Sprite2D>          _background = new();
     private readonly Disenfranchised<Action<BoardCell>> _onClick    = new();
@@ -14,8 +14,8 @@ public partial class CellView : Area2D, ISceneRoot<CellView, (BoardCell, Action<
     [Signal]
     public delegate void OnCellClickedEventHandler(CellView cell);
 
-    public CellView InitializeSelf((BoardCell, Action<BoardCell>) input) {
-        var (model, onClick) = input;
+    public CellView InitializeSelf(SpawnInput input) {
+        var (model, onClick, rectInMeters) = input;
         _model.Enfranchise(model);
         _background.Enfranchise(GetNode<Sprite2D>("Sprite2D"));
 
@@ -30,6 +30,8 @@ public partial class CellView : Area2D, ISceneRoot<CellView, (BoardCell, Action<
 
         _onClick.Enfranchise(onClick);
 
+        this.AdjustSizeAndPosition(rectInMeters);
+
         return this;
     }
 
@@ -42,4 +44,21 @@ public partial class CellView : Area2D, ISceneRoot<CellView, (BoardCell, Action<
             _onClick.Value(_model.Value);
         }
     }
+
+    public readonly record struct SpawnInput(
+        BoardCell         MyCell,
+        Action<BoardCell> OnClick,
+        Rect2 RectInMeters
+    );
+
+    /// <summary>
+    /// The input for spawning <i>multiple</i> <see cref="CellView"/>s aligned with each other.
+    /// </summary>
+    /// <param name="CellSizeInMeters"></param>
+    /// <param name="OnClick"></param>
+    public readonly record struct BoardSpawnInput(
+        BoardGrid BoardGrid,
+        Vector2           CellSizeInMeters,
+        Action<BoardCell> OnClick
+    );
 }

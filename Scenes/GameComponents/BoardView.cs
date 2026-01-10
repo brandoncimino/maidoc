@@ -15,27 +15,7 @@ public partial class BoardView : SceneRoot2D<BoardView, (BoardGrid, Action<Board
         GD.Print($"Board is READY with: {MyInput}");
     }
 
-    private void InstantiateCell(BoardCell boardCell, Action<BoardCell> onCellClicked) {
-        CellScene
-            .Instantiate<CellView>()
-            .Initialize((boardCell, onCellClicked))
-            .AsChildOf(this)
-            .AdjustSizeAndPosition(
-                new Rect2(
-                    CellSizeInMeters * new Vector2(boardCell.Coord.X, boardCell.Coord.Y),
-                    CellSizeInMeters
-                )
-            );
-    }
-
     public BoardView InitializeSelf((BoardGrid, Action<BoardCell>) input) {
-
-        Helpers.ForEachCellIndex(
-            input.Item1.Width,
-            input.Item1.Height,
-            (x, y) => { InstantiateCell(input.Item1[x,y], input.Item2); }
-        );
-
-        return this;
+        throw new NotImplementedException();
     }
 }

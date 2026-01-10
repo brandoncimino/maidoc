@@ -8,7 +8,7 @@ using maidoc.Core.NormalCreatures;
 namespace maidoc.Scenes.GameComponents;
 
 [Tool]
-public partial class CardView : InteractiveSceneRoot2D<CardView, CardView.Input>, ISceneRoot<CardView, CardView.Input> {
+public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardSceneRoot.Input>, ISceneRoot<CardSceneRoot, CardSceneRoot.Input> {
     private readonly Disenfranchised<PaperCard> _myCard = new();
     public           PaperCard                  MyCard => _myCard.Value;
 
@@ -75,7 +75,7 @@ public partial class CardView : InteractiveSceneRoot2D<CardView, CardView.Input>
         );
     }
 
-    public CardView InitializeSelf(Input input) {
+    public CardSceneRoot InitializeSelf(Input input) {
         if (input is {MyCard: NormalCreatureCard normalCreatureCard}) {
             _text.Get(this).Append(normalCreatureCard.CreatureData);
         }

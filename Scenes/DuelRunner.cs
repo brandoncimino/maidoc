@@ -4,10 +4,11 @@ using Godot;
 using maidoc.Core;
 using maidoc.Core.Cards;
 using maidoc.Scenes.GameComponents;
+using maidoc.Scenes.UI;
 
 namespace maidoc.Scenes;
 
-public partial class DuelRunner : SceneRoot2D<DuelRunner, Referee>, ISceneRoot<DuelRunner, Referee> {
+public partial class DuelRunner : SceneRoot2D<DuelRunner, DuelRunner.SpawnInput>, ISceneRoot<DuelRunner, DuelRunner.SpawnInput> {
     [Export]
     public PackedScene PlayerInterfaceScene;
 
@@ -20,26 +21,20 @@ public partial class DuelRunner : SceneRoot2D<DuelRunner, Referee>, ISceneRoot<D
     [Export]
     public PackedScene HandScene;
 
-    public DuelRunner InitializeSelf(Referee referee) {
+    private readonly Disenfranchised<GodotPlayerInterface> _playerInterface = new();
+
+    public DuelRunner InitializeSelf(SpawnInput input) {
         var playerInterface = new PlayerInterface() {
-            Referee = referee
+            Referee = input.Referee
         };
 
-        BoardScene
-            .Instantiate<GameComponents.BoardView>()
-            .Initialize((referee.Board, cell => playerInterface.TrySelect(cell)))
-            .AsChildOf(this)
-            ;
+        MyInput.SceneFactory.SpawnBoardCells(input.BoardSpawnInput);
 
-        foreach (var playerId in Enum.GetValues<PlayerId>()) {
-            HandScene
-                .Instantiate<HandView>()
-                .Initialize(default)
-                .AsChildOf(this)
-                ;
-
-
-        }
+        _playerInterface.Enfranchise(
+            new GodotPlayerInterface() {
+                
+            }
+            );
 
         PlayerInterfaceScene
             .Instantiate<UI.GodotPlayerInterface>()
@@ -50,10 +45,9 @@ public partial class DuelRunner : SceneRoot2D<DuelRunner, Referee>, ISceneRoot<D
         return this;
     }
 
-    public void SpawnCard(CardView.Input input) {
-        CardScene.Instantiate<CardView>()
-            .Initialize(input)
-            .AsChildOf(this)
-            ;
-    }
+    public readonly record struct SpawnInput(
+        SceneFactory SceneFactory,
+        Referee      Referee,
+        CellView.BoardSpawnInput BoardSpawnInput
+    );
 }

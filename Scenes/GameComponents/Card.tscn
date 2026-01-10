@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://x1upoyfhm8fj"]
 
-[ext_resource type="Script" uid="uid://1b66m0h2hoyk" path="res://Scenes/GameComponents/CardView.cs" id="1_45bq5"]
 [ext_resource type="Shape2D" uid="uid://cpyuprxwtc0xq" path="res://rectangle_1meter.tres" id="1_h8wm0"]
+[ext_resource type="Script" uid="uid://1b66m0h2hoyk" path="res://Scenes/GameComponents/CardSceneRoot.cs" id="1_l2em0"]
 [ext_resource type="Texture2D" uid="uid://bknt8joo10j57" path="res://Sprites/normal_monster.png" id="2_3m7nw"]
 [ext_resource type="Texture2D" uid="uid://c1oaqpv0lxr35" path="res://Sprites/Blue-Eyes White Dragon.png" id="2_kphy1"]
 [ext_resource type="Script" uid="uid://bo6kwxn6xcj7o" path="res://Scenes/GameComponents/GameSprite.cs" id="3_kphy1"]
@@ -11,8 +11,7 @@
 [sub_resource type="LabelSettings" id="LabelSettings_gcjpo"]
 
 [node name="Card" type="Area2D"]
-script = ExtResource("1_45bq5")
-MaximumFontSizeInMeters = 0.05
+script = ExtResource("1_l2em0")
 
 [node name="ClickBox" type="CollisionShape2D" parent="."]
 scale = Vector2(0.71428573, 1)
@@ -52,6 +51,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("7_l2em0")
 expand_mode = 1
 
