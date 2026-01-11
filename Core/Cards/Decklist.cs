@@ -20,6 +20,7 @@ public readonly record struct Decklist(ImmutableArray<ICardData> Cards) {
             CreatureData.JunkRhino,
             CreatureData.JunkRhino,
             CreatureData.JunkRhino,
+            CreatureData.BlueEyesWhiteDragon
         ]
     );
 }
