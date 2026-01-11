@@ -4,32 +4,25 @@ using Godot;
 
 namespace maidoc.Scenes;
 
-public static class LazyChild {
-
-}
-
-public sealed class LazyChild<T>  where T : Node {
-    private T?            _child;
-    private readonly Func<Node, T> _truancyOfficer;
-
-    public LazyChild(Func<Node, T> truancyOfficer) {
-        _truancyOfficer = truancyOfficer;
-    }
+/// <param name="truancyOfficer">Retrieves a delinquent <see cref="_child"/>.</param>
+/// <typeparam name="T">The type of <see cref="_child"/>.</typeparam>
+public sealed class LazyChild<T>(Func<Node, T> truancyOfficer)
+    where T : Node {
+    private T? _child;
 
     public LazyChild(string uniqueName) : this(parent => parent.EnumerateChildren()
         .OfType<T>()
         .Single(it => it.Name == uniqueName)
-    ) {
-
-    }
+    ) { }
 
     public static LazyChild<T> ByName(string uniqueName) {
         return new LazyChild<T>(parent => parent.EnumerateChildren()
             .OfType<T>()
-            .Single(it => it.Name == uniqueName));
+            .Single(it => it.Name == uniqueName)
+        );
     }
 
     public T Get(Node parent) {
-        return _child ??= _truancyOfficer(parent);
+        return _child ??= truancyOfficer(parent);
     }
 }
