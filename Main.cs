@@ -6,15 +6,13 @@ using maidoc.Scenes;
 
 namespace maidoc;
 
-public partial class Main : Node2D
-{
+public partial class Main : Node2D {
     [Export]
     public required PackedScene DuelRunnerScene;
 
+    private readonly LazyChild<SceneFactory> _sceneFactory = new();
 
-
-    public override void _Ready()
-    {
+    public override void _Ready() {
         // TODO: Early placeholder - eventually, the scene will be instantiated externally and the `Referee` will be provided by someone else.
         var decklist = Decklist.DevPlaceholder;
 
@@ -27,10 +25,24 @@ public partial class Main : Node2D
             new Ruleset()
         );
 
+        var playerInterface = new PlayerInterface() {
+            Referee = referee
+        };
+
         DuelRunnerScene
             .Instantiate<DuelRunner>()
             .AsChildOf(this)
-            .InitializeSelf(referee);
+            .InitializeSelf(
+                new DuelRunner.SpawnInput() {
+                    BoardSpawnInput = new CellView.BoardSpawnInput {
+                        BoardGrid        = referee.Board,
+                        CellSizeInMeters = new Vector2(1.1f, 1.1f),
+                        OnClick          = _ => { }
+                    },
+                    PlayerInterface = playerInterface,
+                    SceneFactory    = _sceneFactory.Get(this)
+                }
+            );
 
         GD.Print("YOLO");
     }

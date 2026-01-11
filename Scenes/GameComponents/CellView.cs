@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Godot;
 using maidoc.Core;
 
@@ -22,7 +20,7 @@ public partial class CellView : Area2D, ISceneRoot<CellView, CellView.SpawnInput
         Modulate = model.OwnerId switch {
             PlayerId.Red  => Colors.Red,
             PlayerId.Blue => Colors.Blue,
-            _               => throw new ArgumentOutOfRangeException(nameof(model.OwnerId), model.OwnerId, null)
+            _             => throw new ArgumentOutOfRangeException(nameof(model.OwnerId), model.OwnerId, null)
         };
 
         _background.Value.Centered = true;
@@ -48,17 +46,17 @@ public partial class CellView : Area2D, ISceneRoot<CellView, CellView.SpawnInput
     public readonly record struct SpawnInput(
         BoardCell         MyCell,
         Action<BoardCell> OnClick,
-        Rect2 RectInMeters
+        Rect2             RectInMeters
     );
 
     /// <summary>
     /// The input for spawning <i>multiple</i> <see cref="CellView"/>s aligned with each other.
     /// </summary>
-    /// <param name="CellSizeInMeters"></param>
-    /// <param name="OnClick"></param>
-    public readonly record struct BoardSpawnInput(
-        BoardGrid BoardGrid,
-        Vector2           CellSizeInMeters,
-        Action<BoardCell> OnClick
-    );
+    public readonly record struct BoardSpawnInput {
+        public required BoardGrid BoardGrid { get; init; }
+
+        public required Vector2 CellSizeInMeters { get; init; }
+
+        public required Action<BoardCell> OnClick { get; init; }
+    }
 }

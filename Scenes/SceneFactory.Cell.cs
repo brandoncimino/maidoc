@@ -1,33 +1,27 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using Godot;
 using maidoc.Core;
-using maidoc.Scenes.GameComponents;
 
 namespace maidoc.Scenes;
 
 public partial class SceneFactory {
-    [Export]
-    public required PackedScene CellScene { get; set; }
-
-    private readonly PackedSceneSpawner<CellView, CellView.SpawnInput> _cellSpawner = new();
+    private readonly PackedSceneSpawner<CellView, CellView.SpawnInput> _cellSpawner = new() {
+        PackedScenePath = "res://Scenes/GameComponents/Cell.tscn"
+    };
 
     public void SpawnBoardCells(
         CellView.BoardSpawnInput input
     ) {
-        var (boardGrid, cellSizeInMeters, onCellClick) = input;
         Helpers.ForEachCellIndex(
-            boardGrid.Width,
-            boardGrid.Height,
+            input.BoardGrid.Width,
+            input.BoardGrid.Height,
             (x, y) => {
                 SpawnCell(
                     new CellView.SpawnInput() {
-                        MyCell  = boardGrid[x, y],
-                        OnClick = onCellClick,
+                        MyCell  = input.BoardGrid[x, y],
+                        OnClick = input.OnClick,
                         RectInMeters = new Rect2(
-                            cellSizeInMeters * new Vector2(x, y),
-                            cellSizeInMeters
+                            input.CellSizeInMeters * new Vector2(x, y),
+                            input.CellSizeInMeters
                         )
                     }
                 );
@@ -35,5 +29,5 @@ public partial class SceneFactory {
         );
     }
 
-    private CellView SpawnCell(CellView.SpawnInput spawnInput) => _cellSpawner.Spawn(CellScene, spawnInput);
+    private CellView SpawnCell(CellView.SpawnInput spawnInput) => _cellSpawner.Spawn(spawnInput);
 }

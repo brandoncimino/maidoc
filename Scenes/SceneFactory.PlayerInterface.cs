@@ -1,16 +1,14 @@
-using Godot;
 using maidoc.Core;
 using maidoc.Scenes.UI;
 
 namespace maidoc.Scenes;
 
 public partial class SceneFactory {
-    [Export]
-    public required PackedScene PlayerInterfaceScene { get; set; }
-
-    private readonly PackedSceneSpawner<GodotPlayerInterface, PlayerInterface> _playerInterfaceSpawner = new();
+    private readonly PackedSceneSpawner<GodotPlayerInterface, PlayerInterface> _playerInterfaceSpawner = new() {
+        PackedScenePath = "res://Scenes/UI/godot_player_interface.tscn"
+    };
 
     public GodotPlayerInterface SpawnPlayerInterface(PlayerInterface playerInterface) {
-        return _playerInterfaceSpawner.Spawn(PlayerInterfaceScene, playerInterface);
+        return _playerInterfaceSpawner.Spawn(playerInterface);
     }
 }

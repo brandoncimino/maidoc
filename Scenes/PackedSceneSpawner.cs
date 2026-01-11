@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Immutable;
 using Godot;
 
@@ -15,6 +14,12 @@ namespace maidoc.Scenes;
 /// <typeparam name="TSceneRoot">The type of the root-level <see cref="Node"/> in the <see cref="PackedScene"/>.</typeparam>
 /// <typeparam name="TInput">The stuff needed to <see cref="ISceneRoot{TSelf,TInput}.InitializeSelf"/>.</typeparam>
 public class PackedSceneSpawner<TSceneRoot, TInput> where TSceneRoot : Node, ISceneRoot<TSceneRoot, TInput> {
+    public required string PackedScenePath { get; init; }
+
+    private PackedScene? _packedScene;
+
+    public PackedScene PackedScene => _packedScene ??= ResourceLoader.Load<PackedScene>(PackedScenePath);
+
     private Node? _parentNode;
 
     /// <summary>
@@ -32,17 +37,16 @@ public class PackedSceneSpawner<TSceneRoot, TInput> where TSceneRoot : Node, ISc
         get => _parentNode ??= new() {
             Name = GroupName
         };
-
         init => _parentNode = value;
     }
 
     /// <summary>
     /// Am <b>immutable snapshot</b> of everything I've <see cref="Spawn"/>ed.
     /// </summary>
-    public ImmutableArray<TInput> Instances {  get; private set; } = ImmutableArray<TInput>.Empty;
+    public ImmutableArray<TInput> Instances { get; private set; } = ImmutableArray<TInput>.Empty;
 
-    public TSceneRoot Spawn(PackedScene packedScene, TInput input) {
-        var instance = packedScene.Instantiate<TSceneRoot>()
+    public TSceneRoot Spawn(TInput input) {
+        var instance = PackedScene.Instantiate<TSceneRoot>()
             .Initialize(input)
             .AsChildOf(GroupNode);
 
