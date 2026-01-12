@@ -52,8 +52,6 @@ public class SceneSpawner<TSceneRoot, TInput> where TSceneRoot : Node, ISceneRoo
         instance.AddToGroup(GroupName);
         Instances = Instances.Add(instance);
 
-        GD.Print($"Spawned: {instance.Name} // {instance}");
-
         return instance;
     }
 
