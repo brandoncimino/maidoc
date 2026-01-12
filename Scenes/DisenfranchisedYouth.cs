@@ -1,31 +1,55 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Godot;
 
 namespace maidoc.Scenes;
 
 [StackTraceHidden]
 public sealed class Disenfranchised<T> {
-    [MemberNotNullWhen(true, nameof(_value))]
+    [MemberNotNullWhen(true, nameof(_value), nameof(EnfranchisedBy))]
     private bool Enfranchised { get; set; }
+
+    private string? EnfranchisedBy { get; set; }
 
     private T? _value;
 
-    public void Enfranchise(
-        Func<T> valueFactory
-    ) {
+    public bool TryEnfranchise(Func<T> valueFactory, [CallerMemberName] string _caller = "") {
         if (Enfranchised) {
-            throw new InvalidOperationException($"Cannot enfranchise because I am already: {_value}");
+            return false;
         }
 
         _value = valueFactory();
-        GD.Print($"Enfranchised to: {_value}");
+        GD.Print($"Enfranchised by {_caller} to: {_value}");
         Enfranchised = true;
+        return true;
     }
 
-    public void Enfranchise(T value) {
-        Enfranchise(() => value);
+    public bool TryEnfranchise(T value, [CallerMemberName] string _caller = "") {
+        return TryEnfranchise(() => value, _caller);
+    }
+
+    public void Enfranchise(
+        Func<T>                   valueFactory,
+        [CallerMemberName] string _caller = ""
+    ) {
+        if (TryEnfranchise(valueFactory, _caller) is false) {
+            throw new InvalidOperationException(
+                $"""
+                 Cannot be enfranchised by {_caller} because I am already enfranchised!
+                   {nameof(_value)}:         {_value}
+                   {nameof(EnfranchisedBy)}: {EnfranchisedBy.OrNullPlaceholder()}
+                 """
+            );
+            throw new InvalidOperationException(
+                $"Cannot be enfranchised by {_caller} because I was already enfranchised to {_value} by {EnfranchisedBy}!"
+            );
+        }
+    }
+
+    public void Enfranchise(T value, [CallerMemberName] string _caller = "") {
+        Enfranchise(() => value, _caller);
     }
 
     public T Value => Enfranchised

@@ -4,11 +4,11 @@ using maidoc.Scenes.UI;
 namespace maidoc.Scenes;
 
 public partial class SceneFactory {
-    private readonly PackedSceneSpawner<GodotPlayerInterface, PlayerInterface> _playerInterfaceSpawner = new() {
-        PackedScenePath = "res://Scenes/UI/godot_player_interface.tscn"
-    };
+    private readonly SceneSpawner<GodotPlayerInterface, PlayerInterface> _playerInterfaceSpawner = new();
 
     public GodotPlayerInterface SpawnPlayerInterface(PlayerInterface playerInterface) {
+        _playerInterfaceSpawner.GroupNode.TryEnfranchise(this);
+
         return _playerInterfaceSpawner.Spawn(playerInterface);
     }
 }

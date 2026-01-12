@@ -6,9 +6,18 @@ using maidoc.Core;
 namespace maidoc.Scenes;
 
 public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, PlayerInterface> {
-    private readonly Disenfranchised<Container>       _menuContainer   =  new();
+    private readonly Disenfranchised<Container>       _menuContainer   = new();
     private readonly Disenfranchised<PlayerInterface> _playerInterface = new();
     private readonly List<DebugMenuItem>              _menuItems       = [];
+
+    private static PackedScene? _packedScene;
+
+    private static PackedScene PackedScene =>
+        _packedScene ??= ResourceLoader.Load<PackedScene>("res://Scenes/UI/debug_menu.tscn");
+
+    public static DebugMenu InstantiateRawScene() {
+        return PackedScene.Instantiate<DebugMenu>();
+    }
 
     public override void _Process(double delta) {
         _menuItems.ForEach(it => it.Update());
@@ -19,8 +28,8 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, PlayerInt
         _menuContainer.Enfranchise(this.RequireOnlyChild<Container>());
         AddMenuItem(() => $"{nameof(playerInterface.Referee.ActivePlayer)}: {playerInterface.Referee.ActivePlayer}");
         AddMenuItem(() => $"{nameof(playerInterface.CurrentAction)}: {playerInterface.CurrentAction}");
-        AddMenuItem(() => "Cancel", playerInterface.Cancel);
-        AddMenuItem(() => "Confirm", () => playerInterface.TryConfirm());
+        AddMenuItem(() => "Cancel",   playerInterface.Cancel);
+        AddMenuItem(() => "Confirm",  () => playerInterface.TryConfirm());
         AddMenuItem(() => "End Turn", () => playerInterface.Referee.EndTurn());
 
         return this;
@@ -29,7 +38,7 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, PlayerInt
     private sealed record DebugMenuItem(
         Func<string> Text,
         Action?      OnClick,
-        Button Button
+        Button       Button
     ) {
         public DebugMenuItem Update() {
             Button.Text = Text();
@@ -58,11 +67,11 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, PlayerInt
         _menuContainer.Value.AddChild(button);
         _menuItems.Add(
             new DebugMenuItem(
-                text,
-                onClick,
-                button
-            )
-            .Update()
+                    text,
+                    onClick,
+                    button
+                )
+                .Update()
         );
     }
 }

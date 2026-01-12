@@ -15,3 +15,6 @@ shape = ExtResource("2_60yta")
 scale = Vector2(1.5625, 1.5625)
 texture = ExtResource("2_g6ws7")
 script = ExtResource("3_60yta")
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(50, 50)

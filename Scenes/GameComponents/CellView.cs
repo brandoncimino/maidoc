@@ -9,6 +9,15 @@ public partial class CellView : Area2D, ISceneRoot<CellView, CellView.SpawnInput
     private readonly Disenfranchised<Sprite2D>          _background = new();
     private readonly Disenfranchised<Action<BoardCell>> _onClick    = new();
 
+    private static PackedScene? _packedScene;
+
+    private static PackedScene PackedScene =>
+        _packedScene ??= ResourceLoader.Load<PackedScene>("res://Scenes/GameComponents/Cell.tscn");
+
+    public static CellView InstantiateRawScene() {
+        return PackedScene.Instantiate<CellView>();
+    }
+
     [Signal]
     public delegate void OnCellClickedEventHandler(CellView cell);
 

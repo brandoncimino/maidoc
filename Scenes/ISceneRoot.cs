@@ -1,9 +1,14 @@
+using System;
 using Godot;
 
 namespace maidoc.Scenes;
 
 public interface ISceneRoot<TSelf, in TInput> where TSelf : Node, ISceneRoot<TSelf, TInput> {
     TSelf InitializeSelf(TInput input);
+
+    static virtual TSelf InstantiateRawScene() {
+        throw new NotImplementedException();
+    }
 }
 
 // public interface ISceneRoot2<TSelf, in TInput>

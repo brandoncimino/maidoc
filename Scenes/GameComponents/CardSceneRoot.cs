@@ -1,14 +1,13 @@
 using System;
-using System.Linq;
 using Godot;
-using maidoc.Core;
 using maidoc.Core.Cards;
 using maidoc.Core.NormalCreatures;
 
 namespace maidoc.Scenes.GameComponents;
 
 [Tool]
-public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardSceneRoot.Input>, ISceneRoot<CardSceneRoot, CardSceneRoot.Input> {
+public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardSceneRoot.Input>,
+    ISceneRoot<CardSceneRoot, CardSceneRoot.Input> {
     private readonly Disenfranchised<PaperCard> _myCard = new();
     public           PaperCard                  MyCard => _myCard.Value;
 
@@ -27,8 +26,7 @@ public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardS
     [Export]
     public float MaximumFontSizeInMeters = .1f;
 
-    public override void _Ready() {
-    }
+    public override void _Ready() { }
 
     [ExportToolButton(nameof(NormalizeSizes))]
     public Callable NormalizeSizesTool => Callable.From(NormalizeSizes);
@@ -76,14 +74,24 @@ public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardS
     }
 
     public CardSceneRoot InitializeSelf(Input input) {
-        if (input is {MyCard: NormalCreatureCard normalCreatureCard}) {
+        if (input is { MyCard: NormalCreatureCard normalCreatureCard }) {
             _text.Get(this).Append(normalCreatureCard.CreatureData);
         }
+
         return this;
     }
 
     public record Input {
         public required PaperCard MyCard  { get; init; }
         public          Action?   OnClick { get; init; }
+    }
+
+    private static PackedScene? _packedScene;
+
+    private static PackedScene PackedScene =>
+        _packedScene ??= ResourceLoader.Load<PackedScene>("res://Scenes/GameComponents/Card.tscn");
+
+    public static CardSceneRoot InstantiateRawScene() {
+        return PackedScene.Instantiate<CardSceneRoot>();
     }
 }

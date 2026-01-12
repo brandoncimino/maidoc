@@ -1,3 +1,4 @@
+using Godot;
 using maidoc.Core;
 using maidoc.Scenes.UI;
 
@@ -6,6 +7,15 @@ namespace maidoc.Scenes;
 public partial class DuelRunner : SceneRoot2D<DuelRunner, DuelRunner.SpawnInput>,
     ISceneRoot<DuelRunner, DuelRunner.SpawnInput> {
     private readonly Disenfranchised<GodotPlayerInterface> _playerInterface = new();
+
+    private static PackedScene? _packedScene;
+
+    private static PackedScene PackedScene =>
+        _packedScene ??= ResourceLoader.Load<PackedScene>("res://Scenes/duel_runner.tscn");
+
+    public static DuelRunner InstantiateRawScene() {
+        return PackedScene.Instantiate<DuelRunner>();
+    }
 
     public DuelRunner InitializeSelf(SpawnInput input) {
         input.SceneFactory.SpawnBoardCells(input.BoardSpawnInput);

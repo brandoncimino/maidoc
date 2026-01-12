@@ -4,8 +4,8 @@ using maidoc.Core;
 namespace maidoc.Scenes;
 
 public partial class SceneFactory {
-    private readonly PackedSceneSpawner<CellView, CellView.SpawnInput> _cellSpawner = new() {
-        PackedScenePath = "res://Scenes/GameComponents/Cell.tscn"
+    private readonly SceneSpawner<CellView, CellView.SpawnInput> _cellSpawner = new() {
+        NamingConvention = (input, i) => $"Cell {input.MyCell.Coord}"
     };
 
     public void SpawnBoardCells(
@@ -29,5 +29,9 @@ public partial class SceneFactory {
         );
     }
 
-    private CellView SpawnCell(CellView.SpawnInput spawnInput) => _cellSpawner.Spawn(spawnInput);
+    public CellView SpawnCell(CellView.SpawnInput spawnInput) {
+        _cellSpawner.UseGroupNode(this);
+
+        return _cellSpawner.Spawn(spawnInput);
+    }
 }
