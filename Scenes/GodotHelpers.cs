@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,7 +8,6 @@ using BSharp.Core;
 using Godot;
 using maidoc.Core;
 using maidoc.Scenes.GameComponents;
-using Corner = Godot.Corner;
 using Side = Godot.Side;
 using Vector2 = Godot.Vector2;
 
@@ -590,8 +588,8 @@ public static partial class GodotHelpers {
     }
 
     private static ValueTuple AdjustSizeAndPosition(
-        Control      control,
-        Rect2 desiredRectInMeters
+        Control control,
+        Rect2   desiredRectInMeters
     ) {
         GD.Print($"{nameof(AdjustSizeAndPosition)} of {control} to {desiredRectInMeters} meters");
         var desiredRectInGodotUnits = desiredRectInMeters.Resize(GodotUnitsPerMeter);
@@ -611,8 +609,8 @@ public static partial class GodotHelpers {
     }
 
     public static T AdjustSizeAndPosition<T>(
-        this T       object2D,
-        Rect2        desiredRectInMeters
+        this T object2D,
+        Rect2  desiredRectInMeters
     ) where T : CanvasItem {
         _ = object2D switch {
             Sprite2D sprite2D => AdjustSizeAndPosition(sprite2D, desiredRectInMeters),
@@ -628,13 +626,11 @@ public static partial class GodotHelpers {
         Node2D node2D,
         Rect2  desiredRectInMeters
     ) {
-        if (node2D is Sprite2D sprite2D) {
-            return AdjustSizeAndPosition(sprite2D, desiredRectInMeters);
-        }
+        Require.Argument(node2D, node2D is not Sprite2D);
 
         // At this point, we assume that, at scale 1, this object matches 1 meter by 1 meter.
         // For example, that would require a `CollisionShape2D` with a `Shape` that is a 100 x 100 rectangle.
-        node2D.Position = desiredRectInMeters.GetCenter();
+        node2D.Position = desiredRectInMeters.GetCenter() * GodotUnitsPerMeter;
         node2D.Scale    = desiredRectInMeters.Size;
 
         return default;
@@ -717,7 +713,6 @@ public static partial class GodotHelpers {
     }
 
 
-
     public readonly record struct ParentBinding {
         public float             Amount       { get; init; }
         public AmountFlavor      AmountFlavor { get; init; }
@@ -761,7 +756,7 @@ public static partial class GodotHelpers {
 
         var childRectInGodotUnits = control.ComputeRectInParentInGodotUnits(parentBindings);
         childRectInGodotUnits.blog();
-        var childRectInMeters     = childRectInGodotUnits.Scale(1f / GodotUnitsPerMeter);
+        var childRectInMeters = childRectInGodotUnits.Scale(1f / GodotUnitsPerMeter);
         control.AdjustSizeAndPosition(childRectInMeters);
 
         AdjustAnchorsAndOffsets(control, parentBindings);
@@ -782,7 +777,7 @@ public static partial class GodotHelpers {
         var topOffset    = parentBindings.Top.GetOffsetInGodotUnits(parentRect.Size.Y);
         var bottomOffset = parentBindings.Bottom.GetOffsetInGodotUnits(parentRect.Size.Y);
 
-        var topLeft = new Vector2(leftOffset, topOffset);
+        var topLeft     = new Vector2(leftOffset, topOffset);
         var bottomRight = parentRect.Size - new Vector2(rightOffset, bottomOffset);
         return Rect2ByCorners(topLeft, bottomRight);
     }
