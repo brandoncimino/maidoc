@@ -6,4 +6,8 @@ public readonly record struct BoardCoord(int X, int Y) {
     }
 
     public BoardCell In(BoardGrid board) => board[this];
+
+    public override string ToString() {
+        return $"({X}, {Y})";
+    }
 }
