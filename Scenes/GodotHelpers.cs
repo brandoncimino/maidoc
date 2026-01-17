@@ -665,16 +665,9 @@ public static partial class GodotHelpers {
         var spriteSize          = sprite2D.Texture.GetSize();
         var actualDesiredMeters = desiredSizeInMeters ?? Vector2.One;
         if (maintainAspectRatio) {
-            var smallerAxis = spriteSize.MinAxisIndex();
-            smallerAxis.blog();
-
+            var smallerAxis           = spriteSize.MinAxisIndex();
             var smallerAxisMultiplier = spriteSize.Sorted().Aspect();
-
-            smallerAxisMultiplier.blog();
-
             actualDesiredMeters *= Vector2.One.WithAxis(smallerAxis, smallerAxisMultiplier);
-
-            actualDesiredMeters.blog();
         }
 
         var desiredSizeInGodot = actualDesiredMeters * GodotUnitsPerMeter;
