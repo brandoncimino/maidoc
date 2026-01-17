@@ -7,25 +7,27 @@ public readonly record struct NormalCreatureStats(
 );
 
 public sealed class NormalCreature(
-    BoardCell myCell,
-    NormalCreatureStats printedStats
+    CellAddress        myCell,
+    NormalCreatureCard myCard
 ) : ICellOccupant, ISelectable {
-    public BoardCell MyCell { get; set; } = myCell;
+    public CellAddress MyCell { get; init; } = myCell;
 
     /// <summary>
     /// The <see cref="NormalCreatureStats"/> that I was born with.
     /// </summary>
-    public NormalCreatureStats PrintedStats { get; }      = printedStats;
+    public NormalCreatureStats PrintedStats => MyCard.CreatureData.PrintedStats;
+
+    public NormalCreatureCard MyCard { get; } = myCard;
 
     /// <summary>
     /// The <see cref="NormalCreatureStats"/> that I currently have, which may have been modified from my <see cref="PrintedStats"/>.
     /// </summary>
-    public NormalCreatureStats Stats        { get; set; } = printedStats;
+    public NormalCreatureStats CurrentStats { get; set; } = myCard.CreatureData.PrintedStats;
 
-    public int CurrentHealth  { get; set; } = printedStats.MaxHealth;
-    public int RemainingMoves { get; set; } = printedStats.MovesPerTurn;
+    public int CurrentHealth  { get; set; } = myCard.CreatureData.PrintedStats.MaxHealth;
+    public int RemainingMoves { get; set; } = myCard.CreatureData.PrintedStats.MovesPerTurn;
 
     public void OnTurnStart() {
-        RemainingMoves = Stats.MovesPerTurn;
+        RemainingMoves = CurrentStats.MovesPerTurn;
     }
 }

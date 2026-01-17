@@ -3,7 +3,7 @@ using maidoc.Core;
 
 namespace maidoc.Scenes.UI;
 
-public partial class GodotPlayerInterface : Node2D, ISceneRoot<GodotPlayerInterface, PlayerInterface> {
+public partial class GodotPlayerInterface : CanvasLayer, ISceneRoot<GodotPlayerInterface, PlayerInterface> {
     [Export]
     public bool DebugMenuEnabled = true;
 

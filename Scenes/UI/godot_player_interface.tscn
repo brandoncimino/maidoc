@@ -1,8 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c4dgkn487ooal"]
+[gd_scene load_steps=2 format=3 uid="uid://c4dgkn487ooal"]
 
 [ext_resource type="Script" uid="uid://b8gmnpjv6romm" path="res://Scenes/UI/GodotPlayerInterface.cs" id="1_21n5a"]
-[ext_resource type="PackedScene" uid="uid://ddxppf0133mg8" path="res://Scenes/UI/debug_menu.tscn" id="2_2r8o2"]
 
-[node name="PlayerInterface" type="Node2D"]
+[node name="PlayerInterface" type="CanvasLayer"]
 script = ExtResource("1_21n5a")
-DebugMenuScene = ExtResource("2_2r8o2")

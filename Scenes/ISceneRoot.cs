@@ -7,7 +7,7 @@ public interface ISceneRoot<TSelf, in TInput> where TSelf : Node, ISceneRoot<TSe
     TSelf InitializeSelf(TInput input);
 
     static virtual TSelf InstantiateRawScene() {
-        throw new NotImplementedException();
+        throw new NotImplementedException(typeof(TSelf).Name);
     }
 }
 

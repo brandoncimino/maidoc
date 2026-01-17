@@ -1,22 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
-using BSharp.Core;
 
 namespace maidoc.Core;
 
 public record Ruleset(
     int StartingHandSize = 4,
-    int Columns          = 4,
-    int RowsPerPlayer    = 2
+    int LaneCount        = 4
 ) {
     public Ruleset Validate() {
         using var validator = new Validator();
 
         validator.Require(StartingHandSize, StartingHandSize > 0);
-        validator.Require(Columns,          Columns          > 0);
-        validator.Require(RowsPerPlayer,    RowsPerPlayer    > 0);
+        validator.Require(LaneCount,        LaneCount        > 0);
 
         return this;
     }
@@ -34,10 +30,12 @@ public readonly ref struct Validator() {
         string _condition = ""
     ) {
         if (!condition) {
-            _violations.Add($"""
-                            `{_value}` ({value}) must satisfy:
-                                {_condition}
-                            """);
+            _violations.Add(
+                $"""
+                 `{_value}` ({value}) must satisfy:
+                     {_condition}
+                 """
+            );
         }
 
         return this;

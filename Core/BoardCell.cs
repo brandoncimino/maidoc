@@ -3,8 +3,8 @@ using System;
 namespace maidoc.Core;
 
 public sealed class BoardCell : ISelectable {
-    public required BoardCoord        Coord         { get; init; }
-    public required PlayerId          OwnerId       { get; init; }
+    public required CellAddress Address { get; init; }
+    public          PlayerId    OwnerId => Address.PlayerId;
 
     private ICellOccupant? _occupant;
 
@@ -19,6 +19,6 @@ public sealed class BoardCell : ISelectable {
     }
 
     public override string ToString() {
-        return $"{nameof(BoardCell)} {Coord} (Occupant: {Occupant})";
+        return $"{nameof(BoardCell)} {Address} (Occupant: {Occupant})";
     }
 }

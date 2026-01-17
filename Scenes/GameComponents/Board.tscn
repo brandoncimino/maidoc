@@ -1,8 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c24yck01s7c4y"]
+[gd_scene load_steps=2 format=3 uid="uid://c24yck01s7c4y"]
 
 [ext_resource type="Script" uid="uid://ds2wd05d2c67m" path="res://Scenes/GameComponents/BoardView.cs" id="1_qails"]
-[ext_resource type="PackedScene" uid="uid://denqo83hlx72i" path="res://Scenes/GameComponents/Cell.tscn" id="2_kaluy"]
 
 [node name="BoardView" type="Node2D"]
 script = ExtResource("1_qails")
-CellScene = ExtResource("2_kaluy")

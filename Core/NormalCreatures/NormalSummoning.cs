@@ -8,12 +8,12 @@ public sealed class NormalSummoning : IPlayerAction {
     public          BoardCell?         Destination  { get; private set; }
 
 
-    public          StepResult<ValueTuple> CanSelect(Referee referee, ISelectable selectable) {
+    public StepResult<ValueTuple> CanSelect(Referee referee, ISelectable selectable) {
         if (selectable is not BoardCell boardCell) {
             return new StepResult<ValueTuple>($"{selectable} is not a {typeof(BoardCell)}.");
         }
 
-        if (boardCell.OwnerId != ActingPlayer) {
+        if (boardCell.Address.PlayerId != ActingPlayer) {
             return new($"{boardCell} is not owned by {ActingPlayer}.");
         }
 
@@ -24,7 +24,7 @@ public sealed class NormalSummoning : IPlayerAction {
         return default;
     }
 
-    public          StepResult<ValueTuple> TrySelect(Referee referee, ISelectable selectable) {
+    public StepResult<ValueTuple> TrySelect(Referee referee, ISelectable selectable) {
         var canSelect = CanSelect(referee, selectable);
 
         if (canSelect.IsSuccess) {
@@ -47,14 +47,14 @@ public sealed class NormalSummoning : IPlayerAction {
         }
 
         return new NormalSummonRequest {
-            CreatureData     = ToSummon.CreatureData,
-            Destination      = Destination.Coord,
-            RequestingPlayer = ActingPlayer
+            Destination           = Destination.Address,
+            RequestingPlayer      = ActingPlayer,
+            PaperCardSerialNumber = ToSummon.SerialNumber
         };
     }
 
     public StepResult<ValueTuple> TryConfirm(Referee referee) {
         return CanConfirmInternal(referee)
-            .Then<ValueTuple>(it => referee.Summon(it));
+            .Then<ValueTuple>(it => referee.NormalSummon(it));
     }
 }

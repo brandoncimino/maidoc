@@ -1,5 +1,5 @@
 using Godot;
-using maidoc.Core;
+using maidoc.Core.Cards;
 
 namespace maidoc.Scenes.GameComponents;
 

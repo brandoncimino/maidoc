@@ -7,9 +7,11 @@ public static partial class GodotHelpers {
         this Node parent,
         TInput    input
     ) where TSceneRoot : Node, ISceneRoot<TSceneRoot, TInput> {
+        // 📎 `_Ready` will be called as soon as the object has a child.
+        //    Therefore, it is vital that `InitializeSelf` is called *FIRST*.
         return TSceneRoot.InstantiateRawScene()
-            .AsChildOf(parent)
-            .InitializeSelf(input);
+            .InitializeSelf(input)
+            .AsChildOf(parent);
     }
 
     public static T Named<T>(

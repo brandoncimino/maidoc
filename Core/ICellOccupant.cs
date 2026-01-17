@@ -1,3 +1,5 @@
+using System;
+
 namespace maidoc.Core;
 
 /// <summary>
@@ -7,5 +9,7 @@ public interface ICellOccupant : ITurnLifecycle {
     /// <summary>
     /// TODO: <see cref="BoardCell.Occupant"/> and <see cref="ICellOccupant.MyCell"/> have a circular relationship. Is that OK? If not, how should it be avoided?
     /// </summary>
-    public BoardCell MyCell { get; }
+    public CellAddress MyCell { get; }
 }
+
+public readonly record struct OccupantId(Guid Value);

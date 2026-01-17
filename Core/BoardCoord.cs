@@ -1,13 +1,19 @@
 namespace maidoc.Core;
 
-public readonly record struct BoardCoord(int X, int Y) {
+/// <summary>
+/// Locates a <see cref="BoardCell"/> within <see cref="BoardRows{T}"/>, which correspond to a <b>specific player</b>.
+/// <br/>
+/// Compare this with <see cref="CellAddress"/>, which can locate <b><i>ANY</i></b> cell, by including the <see cref="CellAddress.PlayerId"/>.
+/// </summary>
+public readonly record struct BoardCoord {
+    public required BoardRowId Row  { get; init; }
+    public required int        Lane { get; init; }
+
     public bool IsOrthogonallyAdjacentTo(BoardCoord other) {
-        return (other.X - X).Abs() == 1 ^ (other.Y - Y).Abs() == 1;
+        return (other.Row - Row).Abs() == 1 ^ (other.Lane - Lane).Abs() == 1;
     }
 
-    public BoardCell In(BoardGrid board) => board[this];
-
     public override string ToString() {
-        return $"({X}, {Y})";
+        return $"({Row}, {Lane})";
     }
 }

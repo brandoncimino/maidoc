@@ -12,4 +12,7 @@
     <Content Include="Keywords.md" />
     <Content Include="godot_notes.adoc" />
   </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Core\Cards\Data\"/>
+    </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -6,7 +7,7 @@ using JetBrains.Annotations;
 
 namespace maidoc.Core.Cards;
 
-public class PaperCardGroup(IEnumerable<PaperCard> cards) {
+public class PaperCardGroup : IPaperZone {
     /// <summary>
     /// Decided to go with <see cref="ImmutableArray"/> over <see cref="ImmutableList{T}"/> mostly because of <see cref="ImmutableArray{T}.Slice"/>,
     /// which is the only tangible benefit - though in theory:
@@ -16,28 +17,31 @@ public class PaperCardGroup(IEnumerable<PaperCard> cards) {
     /// which makes computers happy (especially in contexts where <see cref="System.Numerics.Vector"/>ization can be used).</li>
     /// </ul>
     /// </summary>
-    private ImmutableArray<PaperCard> _cards = cards.ToImmutableArray().RequireDistinct();
+    private ImmutableArray<SerialNumber> _cards = [];
+
+    public ZoneAddress Address { get; init; }
 
     [MustUseReturnValue]
-    public PaperCard DrawAt(Index index) {
+    public SerialNumber DrawAt(Index index) {
         var offset = index.GetOffset(_cards.Length);
         var drawn  = _cards[offset];
-        _cards             = _cards.RemoveAt(offset);
+        _cards = _cards.RemoveAt(offset);
         return drawn;
     }
 
     [MustUseReturnValue]
-    public ReadOnlySpan<PaperCard> DrawRange(Range range) {
+    public ReadOnlySpan<SerialNumber> DrawRange(Range range) {
         var drawn = _cards.AsSpan(range);
         var (offset, length) = range.GetOffsetAndLength(_cards.Length);
         _cards               = _cards.RemoveRange(offset, length);
         return drawn;
     }
 
-    public void Insert(Index index, PaperCard card) {
+    public void Insert(Index index, SerialNumber card) {
         if (_cards.Contains(card)) {
             throw new ArgumentException(
-                $"Can't insert {card} into the deck at index {index} because it is ALREADY in the deck!");
+                $"Can't insert {card} into the deck at index {index} because it is ALREADY in the deck!"
+            );
         }
 
         _cards = _cards.Insert(index.GetOffset(_cards.Length), card);
@@ -58,17 +62,32 @@ public class PaperCardGroup(IEnumerable<PaperCard> cards) {
         _cards = shuffled.DrainToImmutable();
     }
 
+    public string? CanRemove(SerialNumber card) {
+        if (_cards.Contains(card) == false) {
+            return $"Couldn't remove the card {card} because it wasn't here!";
+        }
+
+        return null;
+    }
+
     public void Remove(
-        PaperCard card
+        SerialNumber card
     ) {
-        var beforeRemove = _cards;
+        var beforeRemove = _cards.Length;
         _cards = _cards.Remove(card);
-        if (beforeRemove.Length == _cards.Length) {
+        if (beforeRemove == _cards.Length) {
             throw new InvalidOperationException($"Couldn't remove the card {card} because it wasn't here!");
         }
     }
 
-    public void Add(PaperCard paperCard) {
+    public SerialNumber RemoveAt(Index index) {
+        var offset   = index.GetOffset(_cards.Length);
+        var toRemove = _cards[offset];
+        _cards = _cards.RemoveAt(offset);
+        return toRemove;
+    }
+
+    public void Add(SerialNumber paperCard) {
         if (_cards.Contains(paperCard)) {
             throw new ArgumentException($"Can't add {paperCard} because it is already here!");
         }
@@ -76,13 +95,15 @@ public class PaperCardGroup(IEnumerable<PaperCard> cards) {
         _cards = _cards.Add(paperCard);
     }
 
-    public void AddRange(ReadOnlySpan<PaperCard> cards) {
-        foreach (var card in cards) {
-            if (_cards.Contains(card)) {
-                throw new ArgumentException($"Can't add {card} because it is already here!");
-            }
-        }
+    public ImmutableArray<SerialNumber>.Enumerator GetEnumerator() => _cards.GetEnumerator();
 
-        _cards = _cards.AddRange(cards);
+    IEnumerator<SerialNumber> IEnumerable<SerialNumber>.GetEnumerator() {
+        return _cards.AsEnumerable().GetEnumerator();
     }
+
+    IEnumerator IEnumerable.GetEnumerator() {
+        return _cards.AsEnumerable().GetEnumerator();
+    }
+
+    public int Count => _cards.Length;
 }

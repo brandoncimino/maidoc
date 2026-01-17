@@ -5,9 +5,9 @@ using maidoc.Core;
 namespace maidoc.Scenes;
 
 public partial class CellView : Area2D, ISceneRoot<CellView, CellView.SpawnInput> {
-    private readonly Disenfranchised<BoardCell>         _model      = new();
-    private readonly Disenfranchised<Sprite2D>          _background = new();
-    private readonly Disenfranchised<Action<BoardCell>> _onClick    = new();
+    private readonly Disenfranchised<CellAddress>         _address    = new();
+    private readonly Disenfranchised<Sprite2D>            _background = new();
+    private readonly Disenfranchised<Action<CellAddress>> _onClick    = new();
 
     private static PackedScene? _packedScene;
 
@@ -22,22 +22,21 @@ public partial class CellView : Area2D, ISceneRoot<CellView, CellView.SpawnInput
     public delegate void OnCellClickedEventHandler(CellView cell);
 
     public CellView InitializeSelf(SpawnInput input) {
-        var (model, onClick, rectInMeters) = input;
-        _model.Enfranchise(model);
+        _address.Enfranchise(input.MyCell);
         _background.Enfranchise(GetNode<Sprite2D>("Sprite2D"));
 
-        Modulate = model.OwnerId switch {
-            PlayerId.Red  => Colors.Red,
+        Modulate = _address.Value.PlayerId switch {
+            PlayerId.Red => Colors.Red,
             PlayerId.Blue => Colors.Blue,
-            _             => throw new ArgumentOutOfRangeException(nameof(model.OwnerId), model.OwnerId, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(_address.Value.PlayerId), _address.Value.PlayerId, null)
         };
 
         _background.Value.Centered = true;
         _background.Value.Position = default;
 
-        _onClick.Enfranchise(onClick);
+        _onClick.Enfranchise(input.OnClick);
 
-        this.AdjustSizeAndPosition(rectInMeters);
+        this.AdjustSizeAndPosition(input.RectInMeters);
 
         return this;
     }
@@ -48,24 +47,14 @@ public partial class CellView : Area2D, ISceneRoot<CellView, CellView.SpawnInput
 
     private void OnInputEvent(Node viewport, InputEvent e, long shapeIdx) {
         if (e is InputEventMouseButton { Pressed: true, ButtonIndex: MouseButton.Left }) {
-            _onClick.Value(_model.Value);
+            GD.Print($"CLICKING cell {this}");
+            _onClick.Value(_address.Value);
         }
     }
 
-    public readonly record struct SpawnInput(
-        BoardCell         MyCell,
-        Action<BoardCell> OnClick,
-        Rect2             RectInMeters
-    );
-
-    /// <summary>
-    /// The input for spawning <i>multiple</i> <see cref="CellView"/>s aligned with each other.
-    /// </summary>
-    public readonly record struct BoardSpawnInput {
-        public required BoardGrid BoardGrid { get; init; }
-
-        public required Vector2 CellSizeInMeters { get; init; }
-
-        public required Action<BoardCell> OnClick { get; init; }
+    public readonly record struct SpawnInput {
+        public required CellAddress         MyCell       { get; init; }
+        public required Action<CellAddress> OnClick      { get; init; }
+        public required Rect2               RectInMeters { get; init; }
     }
 }

@@ -1,38 +1,53 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using maidoc.Core.Cards;
 
 namespace maidoc.Core;
 
-/// <summary>
-///
-/// </summary>
+[SuppressMessage("ReSharper", "UseCollectionExpression", Justification = "🤮")]
 public sealed class DuelDisk {
-    private readonly PaperCardGroup _deck;
-    private readonly PaperCardGroup _hand;
-    private readonly PaperCardGroup _graveyard;
+    public PlayerId PlayerId  { get; }
+    public int      LaneCount { get; }
+
+    public ImmutableDictionary<DuelDiskZoneId, PaperCardGroup> PaperZones { get; }
+
+    public IPaperZone this[DuelDiskZoneId id] => PaperZones[id];
+
+    public BoardRows<BoardCell> Rows { get; }
+    // public ImmutableDictionary<BoardRowId, ImmutableArray<BoardCell>> Rows { get; }
 
     public DuelDisk(
-        IEnumerable<PaperCard> startingDeck
+        PlayerId playerId,
+        int      laneCount
     ) {
-        _deck      = new PaperCardGroup(startingDeck);
-        _hand      = new PaperCardGroup([]);
-        _graveyard = new PaperCardGroup([]);
+        LaneCount = laneCount;
+        PlayerId  = playerId;
+
+        PaperZones = Enum.GetValues<DuelDiskZoneId>()
+            .ToImmutableDictionary(
+                it => it,
+                it => new PaperCardGroup()
+            );
+
+        Rows = new(
+            playerId,
+            laneCount,
+            address => new BoardCell() {
+                Address = address
+            }
+        );
     }
 
-    public PaperCard Draw() => DrawAt(Index.Start);
-
-    public ReadOnlySpan<PaperCard> DrawRange(Range range) {
-        var drawn = _deck.DrawRange(range);
-        _hand.AddRange(drawn);
-        return drawn;
+    public IEnumerable<IPaperZone> EnumerateZones() {
+        return PaperZones.Values;
     }
 
-    public PaperCard DrawAt(Index index) {
-        var drawn = _deck.DrawAt(index);
-        _hand.Add(drawn);
-        return drawn;
+    /// <summary>
+    /// <b><i>From the perspective of this player</i></b>, left to right, <see cref="BoardRowId.Front"/> to <see cref="BoardRowId.Back"/>.
+    /// </summary>
+    public IEnumerable<BoardCell> EnumerateCells() {
+        return Rows;
     }
 }

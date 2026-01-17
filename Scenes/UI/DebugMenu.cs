@@ -26,6 +26,7 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, PlayerInt
     public DebugMenu InitializeSelf(PlayerInterface playerInterface) {
         _playerInterface.Enfranchise(playerInterface);
         _menuContainer.Enfranchise(this.RequireOnlyChild<Container>());
+        AddMenuItem(() => $"Start Game", playerInterface.Referee.StartGame);
         AddMenuItem(() => $"{nameof(playerInterface.Referee.ActivePlayer)}: {playerInterface.Referee.ActivePlayer}");
         AddMenuItem(() => $"{nameof(playerInterface.CurrentAction)}: {playerInterface.CurrentAction}");
         AddMenuItem(() => "Cancel",   playerInterface.Cancel);
@@ -49,6 +50,14 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, PlayerInt
             OnClick?.Invoke();
             return this;
         }
+    }
+
+    private void AddPlayerMenu(DebugMenu debugMenu, PlayerId playerId) {
+        debugMenu.AddMenuGroup(menu => {
+                menu.AddMenuItem(() => $"Player {playerId}");
+                menu.AddMenuItem(() => "Draw", () => _playerInterface.Value.Referee.DrawFromDeck(playerId));
+            }
+        );
     }
 
     private void AddMenuGroup(

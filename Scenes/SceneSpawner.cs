@@ -57,7 +57,7 @@ public class SceneSpawner<TSceneRoot, TInput> where TSceneRoot : Node, ISceneRoo
 
     public SceneSpawner<TSceneRoot, TInput> UseGroupNode(Node groupNodeParent) {
         GroupNode.TryEnfranchise(() =>
-            new Node()
+            new Node2D()
                 .Named(GroupName)
                 .AsChildOf(groupNodeParent)
         );

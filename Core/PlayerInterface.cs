@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Godot;
-using maidoc.Core.Cards;
 
 namespace maidoc.Core;
 
@@ -17,9 +14,13 @@ public sealed class PlayerInterface {
         CurrentAction = null;
     }
 
+    public void ClickCell(CellAddress cellAddress) { }
+
     public StepResult<ValueTuple> TrySelect(ISelectable selection) {
+        GD.Print($"Attempting to select: {selection}");
+
         if (CurrentAction is not null) {
-            return CurrentAction.TrySelect(Referee,  selection);
+            return CurrentAction.TrySelect(Referee, selection);
         }
 
         if (selection is IActionStarter actionStarter) {

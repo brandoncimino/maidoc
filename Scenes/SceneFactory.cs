@@ -1,6 +1,9 @@
 using System;
 using System.Linq;
 using Godot;
+using maidoc.Core;
+using maidoc.Scenes.GameComponents;
+using maidoc.Scenes.UI;
 
 namespace maidoc.Scenes;
 
@@ -25,5 +28,35 @@ public partial class SceneFactory : Node2D {
         }
 
         return _duelRunnerSpawner.Spawn(input);
+    }
+
+    private readonly SceneSpawner<BoardView, BoardView.SpawnInput> _boardSpawner = new() {
+        NamingConvention = (input, i) => $"Board {input.PlayerId}"
+    };
+
+    public BoardView SpawnPlayerBoard(
+        BoardView.SpawnInput input
+    ) {
+        _boardSpawner.UseGroupNode(this);
+        return _boardSpawner.Spawn(input);
+    }
+
+    public CellView SpawnCell(CellView.SpawnInput spawnInput) {
+        _cellSpawner.UseGroupNode(this);
+
+        return _cellSpawner.Spawn(spawnInput);
+    }
+
+    private readonly SceneSpawner<CellView, CellView.SpawnInput> _cellSpawner = new() {
+        NamingConvention = (input, i) => $"Cell {input.MyCell}"
+    };
+
+
+    private readonly SceneSpawner<GodotPlayerInterface, PlayerInterface> _playerInterfaceSpawner = new();
+
+    public GodotPlayerInterface SpawnPlayerInterface(PlayerInterface playerInterface) {
+        _playerInterfaceSpawner.GroupNode.TryEnfranchise(this);
+
+        return _playerInterfaceSpawner.Spawn(playerInterface);
     }
 }

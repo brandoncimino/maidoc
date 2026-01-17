@@ -1,8 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cp01x8bm0rpa6"]
+[gd_scene load_steps=2 format=3 uid="uid://cp01x8bm0rpa6"]
 
 [ext_resource type="Script" uid="uid://cuak3yx4l3p5y" path="res://Main.cs" id="1_glv2v"]
-[ext_resource type="PackedScene" uid="uid://c2igwruopjay7" path="res://Scenes/duel_runner.tscn" id="2_uu6xs"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node"]
 script = ExtResource("1_glv2v")
-DuelRunnerScene = ExtResource("2_uu6xs")
+
+[node name="Camera2D" type="Camera2D" parent="."]
