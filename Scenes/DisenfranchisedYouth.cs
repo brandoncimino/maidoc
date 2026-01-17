@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Godot;
 
 namespace maidoc.Scenes;
 
@@ -20,8 +19,7 @@ public sealed class Disenfranchised<T> {
             return false;
         }
 
-        _value = valueFactory();
-        GD.Print($"Enfranchised by {_caller} to: {_value}");
+        _value       = valueFactory();
         Enfranchised = true;
         return true;
     }
@@ -41,9 +39,6 @@ public sealed class Disenfranchised<T> {
                    {nameof(_value)}:         {_value}
                    {nameof(EnfranchisedBy)}: {EnfranchisedBy.OrNullPlaceholder()}
                  """
-            );
-            throw new InvalidOperationException(
-                $"Cannot be enfranchised by {_caller} because I was already enfranchised to {_value} by {EnfranchisedBy}!"
             );
         }
     }
