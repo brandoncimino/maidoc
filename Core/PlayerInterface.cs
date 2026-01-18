@@ -14,7 +14,9 @@ public sealed class PlayerInterface {
         CurrentAction = null;
     }
 
-    public void ClickCell(CellAddress cellAddress) { }
+    public void ClickCell(CellAddress cellAddress) {
+        GD.Print($"TODO: click {cellAddress}");
+    }
 
     public StepResult<ValueTuple> TrySelect(ISelectable selection) {
         GD.Print($"Attempting to select: {selection}");

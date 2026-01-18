@@ -39,6 +39,7 @@ public partial class Main : Node {
         Decklist decklist,
         Ruleset  ruleset
     ) {
+        var paperPusher = new PaperPusher(ruleset.LaneCount);
         var referee = Referee.PrepareFreshGame(
             new Dictionary<PlayerId, Decklist> {
                 [PlayerId.Red]  = decklist,
@@ -46,10 +47,14 @@ public partial class Main : Node {
             },
             PlayerId.Red,
             ruleset,
-            new PaperPusher(ruleset.LaneCount)
+            paperPusher
         );
 
         var playerInterface = new PlayerInterface() {
+            Referee = referee
+        };
+
+        var godotBetween = new GodotBetween() {
             Referee = referee
         };
 
@@ -61,7 +66,9 @@ public partial class Main : Node {
                 LaneCount        = 4
             },
             PlayerInterface = playerInterface,
-            SceneFactory    = _sceneFactory.Get(this)
+            SceneFactory    = _sceneFactory.Get(this),
+            GodotBetween    = godotBetween,
+            PaperPusher     = paperPusher
         };
 
         _duelRunner = _sceneFactory.Get(this).SpawnDuelRunner(duelRunnerInput);

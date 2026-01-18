@@ -11,6 +11,8 @@ public sealed class Referee {
     private          Ruleset     Ruleset { get; }
     private readonly PaperPusher _paperPusher;
 
+    public IPaperView PaperView => _paperPusher;
+
     public PlayerId ActivePlayer { get; private set; }
 
     public PlayerId InactivePlayer => ActivePlayer switch {
@@ -53,11 +55,24 @@ public sealed class Referee {
         Ruleset                         ruleset,
         PaperPusher                     paperPusher
     ) {
-        return new Referee(
+        var referee = new Referee(
             activePlayer: startingPlayer,
             ruleset,
             paperPusher
         );
+
+        foreach (var (player, decklist) in decklists) {
+            foreach (var card in decklist.Cards) {
+                paperPusher.PrintCard(
+                    player,
+                    card,
+                    SerialNumber.Random(),
+                    DuelDiskZoneId.Deck
+                );
+            }
+        }
+
+        return referee;
     }
 
     public void EndTurn() {
@@ -102,5 +117,9 @@ public sealed class Referee {
 
     public IEnumerable<IGameEvent> DrawFromDeck(PlayerId playerId) {
         yield return _paperPusher.DrawFromDeck(playerId, 0);
+    }
+
+    public IEnumerable<IGameEvent> ShuffleDeck(PlayerId playerId, Random random) {
+        yield return _paperPusher.ShuffleDeck(playerId, random);
     }
 }

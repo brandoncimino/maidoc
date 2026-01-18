@@ -1,5 +1,6 @@
 using Godot;
 using maidoc.Core;
+using maidoc.Core.Cards;
 using maidoc.Scenes.GameComponents;
 using maidoc.Scenes.UI;
 
@@ -19,7 +20,14 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
     }
 
     public DuelRunner InitializeSelf(SpawnInput input) {
-        _playerInterface.Enfranchise(() => input.SceneFactory.SpawnPlayerInterface(input.PlayerInterface));
+        _playerInterface.Enfranchise(() => input.SceneFactory.SpawnPlayerInterface(
+                new GodotPlayerInterface.SpawnInput() {
+                    PlayerInterface = input.PlayerInterface,
+                    GodotBetween    = input.GodotBetween,
+                    PaperView       = input.PaperPusher
+                }
+            )
+        );
 
         _playerBoards.Enfranchise(() =>
             PlayerMap.Create(id =>
@@ -32,9 +40,14 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
         return this;
     }
 
+    /// <summary>
+    /// TODO: The responsibilities between <see cref="PlayerInterface"/>, <see cref="GodotBetween"/>, <see cref="Referee"/>, <see cref="PaperPusher"/>...it's a mess
+    /// </summary>
     public readonly record struct SpawnInput {
         public required SceneFactory         SceneFactory    { get; init; }
         public required BoardView.SpawnInput BoardSpawnInput { get; init; }
         public required PlayerInterface      PlayerInterface { get; init; }
+        public required GodotBetween         GodotBetween    { get; init; }
+        public required PaperPusher          PaperPusher     { get; init; }
     }
 }

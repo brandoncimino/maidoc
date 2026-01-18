@@ -48,10 +48,8 @@ public class PaperCardGroup : IPaperZone {
     }
 
     public void Shuffle(
-        Random? random = null
+        Random random
     ) {
-        random ??= Random.Shared;
-
         var shuffled = _cards.ToBuilder();
         for (int a = shuffled.Count - 1; a >= 0; a--) {
             var b = random.Next(a + 1);
@@ -106,4 +104,8 @@ public class PaperCardGroup : IPaperZone {
     }
 
     public int Count => _cards.Length;
+
+    public ImmutableArray<SerialNumber> Snapshot() {
+        return _cards;
+    }
 }

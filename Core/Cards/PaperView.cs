@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace maidoc.Core.Cards;
 
 /// <summary>
@@ -8,4 +10,6 @@ public interface IPaperView {
     public IPaperZone GetZoneOfCard(SerialNumber serialNumber);
 
     public ICellOccupant? GetCellOccupant(CellAddress cellAddress);
+
+    public ImmutableArray<ICardData> GetZoneSnapshot(ZoneAddress zoneAddress);
 }

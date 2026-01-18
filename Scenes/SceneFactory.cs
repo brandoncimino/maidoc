@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using Godot;
-using maidoc.Core;
 using maidoc.Scenes.GameComponents;
 using maidoc.Scenes.UI;
 
@@ -52,11 +51,12 @@ public partial class SceneFactory : Node2D {
     };
 
 
-    private readonly SceneSpawner<GodotPlayerInterface, PlayerInterface> _playerInterfaceSpawner = new();
+    private readonly SceneSpawner<GodotPlayerInterface, GodotPlayerInterface.SpawnInput>
+        _playerInterfaceSpawner = new();
 
-    public GodotPlayerInterface SpawnPlayerInterface(PlayerInterface playerInterface) {
+    public GodotPlayerInterface SpawnPlayerInterface(GodotPlayerInterface.SpawnInput spawnInput) {
         _playerInterfaceSpawner.GroupNode.TryEnfranchise(this);
 
-        return _playerInterfaceSpawner.Spawn(playerInterface);
+        return _playerInterfaceSpawner.Spawn(spawnInput);
     }
 }

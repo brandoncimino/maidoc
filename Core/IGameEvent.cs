@@ -14,4 +14,8 @@ public readonly record struct CardMovedEvent : IGameEvent {
     public required ZoneAddress To   { get; init; }
 }
 
+public readonly record struct DeckShuffledEvent : IGameEvent {
+    public required PlayerId PlayerId { get; init; }
+}
+
 public sealed class CardAddedToHand(PlayerId playerId, PaperCard paperCard) : IGameEvent;

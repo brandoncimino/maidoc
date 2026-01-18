@@ -16,6 +16,8 @@ public abstract class PaperCard : ISelectable {
     public required PaperPusher Pusher { get; init; }
 
     public IPaperZone Zone => Pusher.GetZoneOfCard(SerialNumber);
+
+    public required ICardData Data { get; init; }
 }
 
 /// <summary>

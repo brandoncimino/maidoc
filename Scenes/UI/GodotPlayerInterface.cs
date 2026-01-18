@@ -1,9 +1,11 @@
 using Godot;
 using maidoc.Core;
+using maidoc.Core.Cards;
 
 namespace maidoc.Scenes.UI;
 
-public partial class GodotPlayerInterface : CanvasLayer, ISceneRoot<GodotPlayerInterface, PlayerInterface> {
+public partial class GodotPlayerInterface : CanvasLayer,
+    ISceneRoot<GodotPlayerInterface, GodotPlayerInterface.SpawnInput> {
     [Export]
     public bool DebugMenuEnabled = true;
 
@@ -20,13 +22,19 @@ public partial class GodotPlayerInterface : CanvasLayer, ISceneRoot<GodotPlayerI
 
     public override void _Ready() { }
 
-    public GodotPlayerInterface InitializeSelf(PlayerInterface playerInterface) {
-        _playerInterface.Enfranchise(playerInterface);
+    public GodotPlayerInterface InitializeSelf(SpawnInput spawnInput) {
+        _playerInterface.Enfranchise(spawnInput.PlayerInterface);
 
         if (DebugMenuEnabled) {
-            this.SpawnChild<DebugMenu, PlayerInterface>(playerInterface);
+            this.SpawnChild<DebugMenu, SpawnInput>(spawnInput);
         }
 
         return this;
+    }
+
+    public readonly record struct SpawnInput {
+        public required PlayerInterface PlayerInterface { get; init; }
+        public required GodotBetween    GodotBetween    { get; init; }
+        public required IPaperView      PaperView       { get; init; }
     }
 }

@@ -46,10 +46,18 @@ public sealed class PaperPusher : IPaperView {
         return DuelDisks[cellAddress.PlayerId].Rows[cellAddress].Occupant;
     }
 
+    public ImmutableArray<ICardData> GetZoneSnapshot(ZoneAddress zoneAddress) {
+        return GetZone(zoneAddress)
+            .Snapshot()
+            .Select(it => GetCard(it).Data)
+            .ToImmutableArray();
+    }
+
     public PaperCard PrintCard<T>(
-        PlayerId     owner,
-        T            cardData,
-        SerialNumber serialNumber
+        PlayerId       owner,
+        T              cardData,
+        SerialNumber   serialNumber,
+        DuelDiskZoneId zone
     ) where T : ICardData {
         if (_allCards.TryGetValue(serialNumber, out var existingCard)) {
             throw new InvalidOperationException($"A card with the {serialNumber} already exists: {existingCard}");
@@ -60,12 +68,19 @@ public sealed class PaperPusher : IPaperView {
                 OwnerId      = owner,
                 CreatureData = cd,
                 SerialNumber = serialNumber,
-                Pusher       = this
+                Pusher       = this,
+                Data         = cd
             },
             _ => throw new ArgumentOutOfRangeException(nameof(cardData), cardData, null)
         };
 
         _allCards[paperCard.SerialNumber] = paperCard;
+        GetZone(
+            new ZoneAddress() {
+                PlayerId = owner,
+                ZoneId   = zone
+            }
+        ).Add(serialNumber);
         return paperCard;
     }
 
@@ -120,6 +135,14 @@ public sealed class PaperPusher : IPaperView {
             Card = GetCard(drawn),
             From = deck.Address,
             To   = hand.Address
+        };
+    }
+
+    public IGameEvent ShuffleDeck(PlayerId playerId, Random random) {
+        var deck = DuelDisks[playerId][Deck];
+        deck.Shuffle(random);
+        return new DeckShuffledEvent() {
+            PlayerId = playerId,
         };
     }
 

@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using BSharp.Core;
 using Godot;
 using maidoc.Core;
+using maidoc.Scenes.UI;
 
 namespace maidoc.Scenes;
 
-public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, PlayerInterface> {
-    private readonly Disenfranchised<Container>       _menuContainer   = new();
-    private readonly Disenfranchised<PlayerInterface> _playerInterface = new();
-    private readonly List<DebugMenuItem>              _menuItems       = [];
+public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, GodotPlayerInterface.SpawnInput> {
+    private readonly Disenfranchised<Container> _menuContainer = new();
+    private readonly List<DebugMenuItem>        _menuItems     = [];
 
     private static PackedScene? _packedScene;
 
@@ -23,64 +25,127 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, PlayerInt
         _menuItems.ForEach(it => it.Update());
     }
 
-    public DebugMenu InitializeSelf(PlayerInterface playerInterface) {
-        _playerInterface.Enfranchise(playerInterface);
+    public DebugMenu InitializeSelf(GodotPlayerInterface.SpawnInput spawnInput) {
         _menuContainer.Enfranchise(this.RequireOnlyChild<Container>());
-        AddMenuItem(() => $"Start Game", playerInterface.Referee.StartGame);
-        AddMenuItem(() => $"{nameof(playerInterface.Referee.ActivePlayer)}: {playerInterface.Referee.ActivePlayer}");
+        var playerInterface = spawnInput.PlayerInterface;
+        AddMenuItem(() => "Start Game", playerInterface.Referee.StartGame);
+        AddMenuItem(() =>
+            $"{nameof(playerInterface.Referee.ActivePlayer)}: {playerInterface.Referee.ActivePlayer.DisplayName()}"
+        );
         AddMenuItem(() => $"{nameof(playerInterface.CurrentAction)}: {playerInterface.CurrentAction}");
         AddMenuItem(() => "Cancel",   playerInterface.Cancel);
         AddMenuItem(() => "Confirm",  () => playerInterface.TryConfirm());
         AddMenuItem(() => "End Turn", () => playerInterface.Referee.EndTurn());
 
+        foreach (var playerId in Players.Ids) {
+            BuildPlayerPanel(playerId, spawnInput);
+        }
+
+        BuildEventQueuePanel(spawnInput);
+
         return this;
     }
 
-    private sealed record DebugMenuItem(
-        Func<string> Text,
-        Action?      OnClick,
-        Button       Button
-    ) {
-        public DebugMenuItem Update() {
-            Button.Text = Text();
-            return this;
-        }
+    private void BuildEventQueuePanel(GodotPlayerInterface.SpawnInput spawnInput) {
+        var eventQueuePanel = new PanelContainer() {
+            Name = "Event Queue Panel"
+        }.AsChildOf(_menuContainer.Value);
+        var eventQueueContainer = new VBoxContainer().AsChildOf(eventQueuePanel);
+        new Label() {
+            Text = "Event Queue",
+            Name = "Event Queue Header"
+        }.AsChildOf(eventQueueContainer);
 
-        public DebugMenuItem Click() {
-            OnClick?.Invoke();
-            return this;
-        }
-    }
-
-    private void AddPlayerMenu(DebugMenu debugMenu, PlayerId playerId) {
-        debugMenu.AddMenuGroup(menu => {
-                menu.AddMenuItem(() => $"Player {playerId}");
-                menu.AddMenuItem(() => "Draw", () => _playerInterface.Value.Referee.DrawFromDeck(playerId));
+        _menuItems.Add(
+            new Label() {
+                    Name = "Event List",
+                }
+                .AsChildOf(eventQueueContainer),
+            eventList => {
+                eventList.Text = spawnInput.GodotBetween._eventQueue switch {
+                    []     => "(empty)",
+                    { } ls => ls.JoinString("\n")
+                };
             }
         );
     }
 
-    private void AddMenuGroup(
-        Action<DebugMenu> buildMenuGroup
-    ) {
-        var panel = new DebugMenu();
-        buildMenuGroup(panel);
-        AddChild(panel);
+    private void BuildPlayerPanel(PlayerId playerId, GodotPlayerInterface.SpawnInput spawnInput) {
+        var playerPanel = new FoldableContainer() {
+            Name           = playerId.DisplayName(),
+            Title          = playerId.DisplayName(),
+            TitleAlignment = HorizontalAlignment.Center,
+        }.AsChildOf(_menuContainer.Value);
+
+        var vFlow = new HFlowContainer().AsChildOf(playerPanel);
+
+        AddMenuItem(() => "Draw",    () => spawnInput.GodotBetween.DrawFromDeck(playerId), vFlow);
+        AddMenuItem(() => "Shuffle", () => spawnInput.GodotBetween.ShuffleDeck(playerId),  vFlow);
+
+        foreach (var duelDiskZoneId in Enum.GetValues<DuelDiskZoneId>()) {
+            var zoneAddress = new ZoneAddress() {
+                PlayerId = playerId,
+                ZoneId   = duelDiskZoneId
+            };
+
+            AddMenuItem(
+                foldableTitle: () => $"{duelDiskZoneId} ({spawnInput.PaperView.GetZoneSnapshot(zoneAddress).Length})",
+                text: () => spawnInput.PaperView.GetZoneSnapshot(zoneAddress)
+                    .Select(it => it.CanonicalName)
+                    .JoinString("\n"),
+                container: vFlow
+            );
+        }
     }
 
-    private void AddMenuItem(
-        Func<string> text,
-        Action?      onClick = null
+    public void AddMenuItem(
+        Func<string>  text,
+        Action?       onClick       = null,
+        Container?    container     = null,
+        Func<string>? foldableTitle = null
     ) {
-        var button = new Button();
-        _menuContainer.Value.AddChild(button);
-        _menuItems.Add(
-            new DebugMenuItem(
-                    text,
-                    onClick,
-                    button
-                )
-                .Update()
-        );
+        var parent = container ?? _menuContainer.Value;
+
+        if (foldableTitle is not null) {
+            var foldableContainer = new FoldableContainer()
+                .AsChildOf(parent);
+
+            _menuItems.Add(foldableContainer, it => it.Title = foldableTitle());
+
+            parent = foldableContainer;
+        }
+
+        if (onClick != null) {
+            var button = new Button()
+                .AsChildOf(parent);
+            button.Pressed += onClick;
+            _menuItems.Add(new(button, () => button.Text = text()));
+        }
+        else {
+            var label = new Label()
+                .AsChildOf(parent);
+            _menuItems.Add(new(label, () => label.Text = text()));
+        }
     }
+}
+
+internal record DebugMenuItem(Control Control, Action Update);
+
+file static class DebugMenuExtensions {
+    public static T Add<T>(
+        this List<DebugMenuItem> menuItems,
+        T                        item,
+        Action<T>                update
+    ) where T : Control {
+        menuItems.Add(new(item, () => update(item)));
+        return item;
+    }
+
+    public static string Icon(this PlayerId playerId) => playerId switch {
+        PlayerId.Red  => "🔴",
+        PlayerId.Blue => "🔵",
+        _             => throw new ArgumentOutOfRangeException(nameof(playerId), playerId, null)
+    };
+
+    public static string DisplayName(this PlayerId playerId) => $"{playerId.Icon()} {playerId} Player";
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace maidoc.Core.Cards;
 
@@ -21,10 +22,14 @@ public interface IPaperZone : IEnumerable<SerialNumber> {
 
     public string? CanDrawAt(Index index) {
         var offset = index.GetOffset(Count);
-        if (offset < 0) {
+        if (offset < 0 || offset >= Count) {
             return "Not enough cards.";
         }
 
         return null;
     }
+
+    public ImmutableArray<SerialNumber> Snapshot();
+
+    public void Shuffle(Random random);
 }
