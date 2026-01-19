@@ -4,14 +4,20 @@ using maidoc.Core;
 using maidoc.Core.Cards;
 using maidoc.Scenes;
 using maidoc.Scenes.GameComponents;
+using maidoc.Scenes.UI;
 
 namespace maidoc;
 
 public partial class Main : Node {
+    [Export]
+    public bool DebugMenuEnabled { get; set; } = true;
+
     private readonly LazyChild<SceneFactory> _sceneFactory = new(parent => new SceneFactory()
         .Named(nameof(SceneFactory))
         .AsChildOf(parent)
     );
+
+    private readonly LazyChild<GodotPlayerInterface> _godotPlayerInterface = new();
 
     private DuelRunner? _duelRunner;
 
@@ -21,17 +27,6 @@ public partial class Main : Node {
         GD.Print("YOLO");
 
         GD.Print(_duelRunner);
-    }
-
-    public override void _Input(InputEvent @event) {
-        if (@event is InputEventKey {
-                Keycode: Key.Space
-            } spaceKey) {
-            GD.Print($"Spacebar pressed: {spaceKey}");
-            GD.Print($"Current _duelRunner: {_duelRunner}");
-            GD.Print($"SceneFactory: {_sceneFactory.Get(this)}");
-            GD.Print($"-> children: {_sceneFactory.Get(this).GetChildren()}");
-        }
     }
 
     private void SpawnDuelRunner(
@@ -50,12 +45,13 @@ public partial class Main : Node {
             paperPusher
         );
 
-        var playerInterface = new PlayerInterface() {
+        var playerInterface = new ActionManager() {
             Referee = referee
         };
 
         var godotBetween = new GodotBetween() {
-            Referee = referee
+            Referee              = referee,
+            GodotPlayerInterface = _godotPlayerInterface.Get(this)
         };
 
         var duelRunnerInput = new DuelRunner.SpawnInput() {
@@ -65,12 +61,20 @@ public partial class Main : Node {
                 OnCellClick      = playerInterface.ClickCell,
                 LaneCount        = 4
             },
-            PlayerInterface = playerInterface,
-            SceneFactory    = _sceneFactory.Get(this),
-            GodotBetween    = godotBetween,
-            PaperPusher     = paperPusher
+            SceneFactory = _sceneFactory.Get(this),
+            GodotBetween = godotBetween,
+            PaperPusher  = paperPusher
         };
 
         _duelRunner = _sceneFactory.Get(this).SpawnDuelRunner(duelRunnerInput);
+
+        if (DebugMenuEnabled) {
+            _godotPlayerInterface.Get(this).SpawnChild<DebugMenu, DebugMenu.SpawnInput>(
+                new DebugMenu.SpawnInput() {
+                    GodotBetween = godotBetween,
+                    PaperView    = paperPusher
+                }
+            );
+        }
     }
 }

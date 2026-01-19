@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
 using Godot;
+using maidoc.Core;
 using maidoc.Scenes.GameComponents;
-using maidoc.Scenes.UI;
 
 namespace maidoc.Scenes;
 
@@ -50,13 +50,23 @@ public partial class SceneFactory : Node2D {
         NamingConvention = (input, i) => $"Cell {input.MyCell}"
     };
 
+    #region Card
 
-    private readonly SceneSpawner<GodotPlayerInterface, GodotPlayerInterface.SpawnInput>
-        _playerInterfaceSpawner = new();
+    private readonly SceneSpawner<CardSceneRoot, CardSceneRoot.Input> _cardSpawner = new();
 
-    public GodotPlayerInterface SpawnPlayerInterface(GodotPlayerInterface.SpawnInput spawnInput) {
-        _playerInterfaceSpawner.GroupNode.TryEnfranchise(this);
+    public CardSceneRoot SpawnCard(
+        CardSceneRoot.Input input
+    ) {
+        _cardSpawner.UseGroupNode(this);
 
-        return _playerInterfaceSpawner.Spawn(spawnInput);
+        Require.Argument(
+            input.MyCard,
+            _cardSpawner.Instances.SingleOrDefault(it => it.MyCard == input.MyCard) is null,
+            $"Can't spawn a {nameof(CardSceneRoot)} for {input.MyCard} because one already exists!"
+        );
+
+        return _cardSpawner.Spawn(input);
     }
+
+    #endregion
 }

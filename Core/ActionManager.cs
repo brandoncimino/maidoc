@@ -4,7 +4,7 @@ using Godot;
 
 namespace maidoc.Core;
 
-public sealed class PlayerInterface {
+public sealed class ActionManager {
     public required Referee Referee { get; init; }
 
     public IPlayerAction? CurrentAction { get; private set; }

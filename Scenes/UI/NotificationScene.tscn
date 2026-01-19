@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5sx2n7bhoy6i"]
+
+[ext_resource type="Script" uid="uid://cvap7mily0o03" path="res://Scenes/UI/NotificationSceneRoot.cs" id="1_so0h0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_so0h0"]
+
+[node name="Notification" type="PanelContainer"]
+offset_right = 100.0
+offset_bottom = 31.0
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxEmpty_so0h0")
+script = ExtResource("1_so0h0")
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Message" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer"]
+layout_mode = 2
+show_percentage = false

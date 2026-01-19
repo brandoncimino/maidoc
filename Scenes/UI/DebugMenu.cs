@@ -4,11 +4,11 @@ using System.Linq;
 using BSharp.Core;
 using Godot;
 using maidoc.Core;
-using maidoc.Scenes.UI;
+using maidoc.Core.Cards;
 
 namespace maidoc.Scenes;
 
-public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, GodotPlayerInterface.SpawnInput> {
+public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu.SpawnInput> {
     private readonly Disenfranchised<Container> _menuContainer = new();
     private readonly List<DebugMenuItem>        _menuItems     = [];
 
@@ -25,16 +25,16 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, GodotPlay
         _menuItems.ForEach(it => it.Update());
     }
 
-    public DebugMenu InitializeSelf(GodotPlayerInterface.SpawnInput spawnInput) {
+    public DebugMenu InitializeSelf(SpawnInput spawnInput) {
         _menuContainer.Enfranchise(this.RequireOnlyChild<Container>());
-        var playerInterface = spawnInput.PlayerInterface;
+        var playerInterface = spawnInput.GodotBetween;
         AddMenuItem(() => "Start Game", playerInterface.Referee.StartGame);
         AddMenuItem(() =>
             $"{nameof(playerInterface.Referee.ActivePlayer)}: {playerInterface.Referee.ActivePlayer.DisplayName()}"
         );
-        AddMenuItem(() => $"{nameof(playerInterface.CurrentAction)}: {playerInterface.CurrentAction}");
-        AddMenuItem(() => "Cancel",   playerInterface.Cancel);
-        AddMenuItem(() => "Confirm",  () => playerInterface.TryConfirm());
+        // AddMenuItem(() => $"{nameof(playerInterface.CurrentAction)}: {playerInterface.CurrentAction}");
+        // AddMenuItem(() => "Cancel",   playerInterface.Cancel);
+        // AddMenuItem(() => "Confirm",  () => playerInterface.TryConfirm());
         AddMenuItem(() => "End Turn", () => playerInterface.Referee.EndTurn());
 
         foreach (var playerId in Players.Ids) {
@@ -46,7 +46,7 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, GodotPlay
         return this;
     }
 
-    private void BuildEventQueuePanel(GodotPlayerInterface.SpawnInput spawnInput) {
+    private void BuildEventQueuePanel(SpawnInput spawnInput) {
         var eventQueuePanel = new PanelContainer() {
             Name = "Event Queue Panel"
         }.AsChildOf(_menuContainer.Value);
@@ -62,15 +62,15 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, GodotPlay
                 }
                 .AsChildOf(eventQueueContainer),
             eventList => {
-                eventList.Text = spawnInput.GodotBetween._eventQueue switch {
+                eventList.Text = spawnInput.GodotBetween.CurrentEvents switch {
                     []     => "(empty)",
-                    { } ls => ls.JoinString("\n")
+                    var ls => ls.JoinString("\n")
                 };
             }
         );
     }
 
-    private void BuildPlayerPanel(PlayerId playerId, GodotPlayerInterface.SpawnInput spawnInput) {
+    private void BuildPlayerPanel(PlayerId playerId, SpawnInput spawnInput) {
         var playerPanel = new FoldableContainer() {
             Name           = playerId.DisplayName(),
             Title          = playerId.DisplayName(),
@@ -126,6 +126,11 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, GodotPlay
                 .AsChildOf(parent);
             _menuItems.Add(new(label, () => label.Text = text()));
         }
+    }
+
+    public readonly record struct SpawnInput {
+        public required GodotBetween GodotBetween { get; init; }
+        public required IPaperView   PaperView    { get; init; }
     }
 }
 

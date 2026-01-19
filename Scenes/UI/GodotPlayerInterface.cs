@@ -1,15 +1,11 @@
 using Godot;
 using maidoc.Core;
-using maidoc.Core.Cards;
 
 namespace maidoc.Scenes.UI;
 
 public partial class GodotPlayerInterface : CanvasLayer,
     ISceneRoot<GodotPlayerInterface, GodotPlayerInterface.SpawnInput> {
-    [Export]
-    public bool DebugMenuEnabled = true;
-
-    private readonly Disenfranchised<PlayerInterface> _playerInterface = new();
+    private readonly LazyChild<Container> _notificationContainer = new(uniqueName: "NotificationContainer");
 
     private static PackedScene? _packedScene;
 
@@ -23,18 +19,17 @@ public partial class GodotPlayerInterface : CanvasLayer,
     public override void _Ready() { }
 
     public GodotPlayerInterface InitializeSelf(SpawnInput spawnInput) {
-        _playerInterface.Enfranchise(spawnInput.PlayerInterface);
-
-        if (DebugMenuEnabled) {
-            this.SpawnChild<DebugMenu, SpawnInput>(spawnInput);
-        }
-
         return this;
     }
 
-    public readonly record struct SpawnInput {
-        public required PlayerInterface PlayerInterface { get; init; }
-        public required GodotBetween    GodotBetween    { get; init; }
-        public required IPaperView      PaperView       { get; init; }
+    public void NotifyPlayer(Notification notification) {
+        _notificationContainer.Get(this)
+            .SpawnChild<NotificationSceneRoot, NotificationSceneRoot.SpawnInput>(
+                new NotificationSceneRoot.SpawnInput() {
+                    Notification = notification
+                }
+            );
     }
+
+    public readonly record struct SpawnInput { }
 }

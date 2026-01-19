@@ -18,4 +18,7 @@ public readonly record struct DeckShuffledEvent : IGameEvent {
     public required PlayerId PlayerId { get; init; }
 }
 
-public sealed class CardAddedToHand(PlayerId playerId, PaperCard paperCard) : IGameEvent;
+public readonly record struct CardAddedToHand : IGameEvent {
+    public required PlayerId  PlayerId  { get; init; }
+    public required PaperCard PaperCard { get; init; }
+}
