@@ -28,7 +28,11 @@ public static partial class GodotHelpers {
         bool              forceReadableName = false,
         Node.InternalMode internalMode      = Node.InternalMode.Disabled
     ) where T : Node {
+        // TODO: Is there any particular reason to use `Reparent` instead?
+        self.GetParent()?.RemoveChild(self);
+
         parent.AddChild(self, forceReadableName, internalMode);
+
         return self;
     }
 

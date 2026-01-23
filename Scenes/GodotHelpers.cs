@@ -25,6 +25,12 @@ public static partial class GodotHelpers {
     public static string OrNullPlaceholder<T>(this T? value, string nullPlaceholder = "⛔") =>
         value?.ToString() ?? nullPlaceholder;
 
+    public static string OrNullPlaceholder<T>(this T? value, Func<T, string> formatter, string nullPlaceholder = "⛔") =>
+        value switch {
+            null => nullPlaceholder,
+            _    => formatter(value)
+        };
+
     #region Silly blogging
 
     private static class GD {
@@ -554,37 +560,6 @@ public static partial class GodotHelpers {
             sprite2D.WorldCenter() - sprite2D.WorldSize() * .5f,
             sprite2D.WorldSize()
         );
-    }
-
-    public static float GetAxis(in this Vector2 vector2, Vector2.Axis axis) => axis switch {
-        Vector2.Axis.X => vector2.X,
-        Vector2.Axis.Y => vector2.Y,
-        _              => throw new ArgumentOutOfRangeException(nameof(axis), axis, null)
-    };
-
-    public static Vector2 Reversed(in this Vector2 vector2) => new(vector2.Y, vector2.X);
-
-    public static Vector2 Sorted(in this Vector2 vector2) {
-        return vector2.Y < vector2.X ? vector2.Reversed() : vector2;
-    }
-
-    public static float MaxAxisValue(in this Vector2 vector2) => vector2.GetAxis(vector2.MaxAxisIndex());
-    public static float MinValue(in this     Vector2 vector2) => vector2.GetAxis(vector2.MinAxisIndex());
-
-    public static Vector2 WithAxis(in this Vector2 vector2, Vector2.Axis axis, float newValue) => axis switch {
-        Vector2.Axis.X => vector2 with { X = newValue },
-        Vector2.Axis.Y => vector2 with { Y = newValue },
-        _              => throw new ArgumentOutOfRangeException(nameof(axis), axis, null)
-    };
-
-    public static Vector2 MultiplyAxis(in this Vector2 vector2, Vector2.Axis axis, float multiplier) =>
-        vector2 * Vector2.One.WithAxis(axis, multiplier);
-
-    /// <returns>A new <see cref="Vector2"/> where the </returns>
-    public static Vector2 NormalizeLargerAxis(in this Vector2 vector2) {
-        var smallerAxis           = vector2.MinAxisIndex();
-        var smallerAxisMultiplier = vector2.Sorted().Aspect();
-        return Vector2.One.WithAxis(smallerAxis, smallerAxisMultiplier);
     }
 
     private static ValueTuple AdjustSizeAndPosition(
