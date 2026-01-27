@@ -5,6 +5,8 @@ using BSharp.Core;
 using Godot;
 using maidoc.Core;
 using maidoc.Core.Cards;
+using maidoc.Scenes.Navigation;
+using Side = Godot.Side;
 
 namespace maidoc.Scenes;
 
@@ -27,6 +29,7 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu
 
     public DebugMenu InitializeSelf(SpawnInput spawnInput) {
         _menuContainer.Enfranchise(this.RequireOnlyChild<Container>());
+
         var playerInterface = spawnInput.GodotBetween;
         AddMenuItem(() => "Start Game", playerInterface.Referee.StartGame);
         AddMenuItem(() =>
@@ -36,6 +39,16 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu
         // AddMenuItem(() => "Cancel",   playerInterface.Cancel);
         // AddMenuItem(() => "Confirm",  () => playerInterface.TryConfirm());
         AddMenuItem(() => "End Turn", () => playerInterface.Referee.EndTurn());
+
+        AddMenuItem(
+            foldableTitle: () =>
+                $"🎯 Focus {GetViewport().GuiGetFocusOwner().OrNullPlaceholder(static it => $"{it.Name}")}",
+            text: () => GetViewport().GuiGetFocusOwner()?.FocusWrapper().DescribeFocus() ?? "",
+            initiallyFolded: true
+        );
+
+        AddMenuItem(() => "🔍 Grab initial focus", () => spawnInput.DuelRunner.FocusOnHand(default));
+        AddMenuItem(() => "❌ Lose focus",          () => GetViewport().GuiReleaseFocus());
 
         foreach (var playerId in Players.Ids) {
             BuildPlayerPanel(playerId, spawnInput);
@@ -91,8 +104,8 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu
             AddMenuItem(
                 foldableTitle: () => $"{duelDiskZoneId} ({spawnInput.PaperView.GetZoneSnapshot(zoneAddress).Length})",
                 text: () => spawnInput.PaperView.GetZoneSnapshot(zoneAddress)
-                    .Select(it => it.CanonicalName)
-                    .JoinString("\n"),
+                                      .Select(it => it.CanonicalName)
+                                      .JoinString("\n"),
                 container: vFlow
             );
         }
@@ -100,14 +113,18 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu
 
     public void AddMenuItem(
         Func<string>  text,
-        Action?       onClick       = null,
-        Container?    container     = null,
-        Func<string>? foldableTitle = null
+        Action?       onClick         = null,
+        Container?    container       = null,
+        Func<string>? foldableTitle   = null,
+        bool          initiallyFolded = true
     ) {
         var parent = container ?? _menuContainer.Value;
 
         if (foldableTitle is not null) {
-            var foldableContainer = new FoldableContainer()
+            var foldableContainer = new FoldableContainer() {
+                    Folded                   = initiallyFolded,
+                    TitleTextOverrunBehavior = TextServer.OverrunBehavior.TrimWordEllipsis
+                }
                 .AsChildOf(parent);
 
             _menuItems.Add(foldableContainer, it => it.Title = foldableTitle());
@@ -116,7 +133,9 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu
         }
 
         if (onClick != null) {
-            var button = new Button()
+            var button = new Button() {
+                    FocusMode = FocusModeEnum.None
+                }
                 .AsChildOf(parent);
             button.Pressed += onClick;
             _menuItems.Add(new(button, () => button.Text = text()));
@@ -131,12 +150,13 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu
     public readonly record struct SpawnInput {
         public required GodotBetween GodotBetween { get; init; }
         public required IPaperView   PaperView    { get; init; }
+        public required DuelRunner   DuelRunner   { get; init; }
     }
 }
 
 internal record DebugMenuItem(Control Control, Action Update);
 
-file static class DebugMenuExtensions {
+internal static class DebugMenuExtensions {
     public static T Add<T>(
         this List<DebugMenuItem> menuItems,
         T                        item,
@@ -153,4 +173,26 @@ file static class DebugMenuExtensions {
     };
 
     public static string DisplayName(this PlayerId playerId) => $"{playerId.Icon()} {playerId} Player";
+
+    public static string DescribeFocus(this FocusWrapper focusWrapper) {
+        return Enum.GetValues<Side>()
+                   .Select(side => $"{side}: {focusWrapper.GetFocusNeighbor(side).Describe()}")
+                   .Concat(
+                       [
+                           $"Previous: {focusWrapper.FocusPrevious.Describe()}",
+                           $"Next:     {focusWrapper.FocusNext.Describe()}"
+                       ]
+                   )
+                   .JoinString("\n");
+    }
+
+    public static string Describe(this NodePath nodePath) {
+        return nodePath.IsEmpty
+            ? "empty"
+            : $"{nodePath.GetName(0)} ->  {nodePath.GetName(nodePath.GetNameCount() - 1)} ({nodePath.GetType().Name})";
+    }
+
+    public static string NodeName(this NodePath nodePath) => nodePath.GetName(nodePath.GetNameCount() - 1);
+
+    public static string Describe(this Node node) => $"{node.Name} {node} [{node.GetType().Name}]";
 }

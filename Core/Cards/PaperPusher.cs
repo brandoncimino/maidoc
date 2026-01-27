@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Godot;
 using maidoc.Core.NormalCreatures;
 using static maidoc.Core.DuelDiskZoneId;
 
@@ -48,9 +49,9 @@ public sealed class PaperPusher : IPaperView {
 
     public ImmutableArray<ICardData> GetZoneSnapshot(ZoneAddress zoneAddress) {
         return GetZone(zoneAddress)
-            .Snapshot()
-            .Select(it => GetCard(it).Data)
-            .ToImmutableArray();
+               .Snapshot()
+               .Select(it => GetCard(it).Data)
+               .ToImmutableArray();
     }
 
     public PaperCard PrintCard<T>(
@@ -86,10 +87,10 @@ public sealed class PaperPusher : IPaperView {
 
     public PaperPusher(int laneCount) {
         DuelDisks = Enum.GetValues<PlayerId>()
-            .ToImmutableDictionary(
-                it => it,
-                it => new DuelDisk(it, laneCount)
-            );
+                        .ToImmutableDictionary(
+                            it => it,
+                            it => new DuelDisk(it, laneCount)
+                        );
     }
 
     public IGameEvent MoveCard(SerialNumber serialNumber, ZoneAddress from, ZoneAddress to) {
@@ -131,6 +132,11 @@ public sealed class PaperPusher : IPaperView {
         var hand = DuelDisks[playerId][Hand];
         hand.Add(drawn);
 
+        GD.Print($"Hand address: {hand.Address}");
+        if (hand.Address.ZoneId != Hand) {
+            throw new InvalidOperationException();
+        }
+
         return new CardMovedEvent() {
             Card = GetCard(drawn),
             From = deck.Address,
@@ -155,10 +161,10 @@ public sealed class PaperPusher : IPaperView {
         PlayerId activePlayer
     ) {
         return DuelDisks[activePlayer]
-            .EnumerateCells()
-            .Concat(
-                DuelDisks[activePlayer.Other()]
-                    .EnumerateCells()
-            );
+               .EnumerateCells()
+               .Concat(
+                   DuelDisks[activePlayer.Other()]
+                       .EnumerateCells()
+               );
     }
 }

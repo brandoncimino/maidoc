@@ -17,8 +17,3 @@ public readonly record struct CardMovedEvent : IGameEvent {
 public readonly record struct DeckShuffledEvent : IGameEvent {
     public required PlayerId PlayerId { get; init; }
 }
-
-public readonly record struct CardAddedToHand : IGameEvent {
-    public required PlayerId  PlayerId  { get; init; }
-    public required PaperCard PaperCard { get; init; }
-}

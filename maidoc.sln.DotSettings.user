@@ -12,6 +12,8 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AEnumerableExtensions_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F3b9beee2aab343f0b67727c32013f8862800_003F35_003Fd530b8a6_003FEnumerableExtensions_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AEnumerable_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F8cfea5bd94fd46d7b0a8d64fe07faa2b7f30_003Fd9_003F3dcc7d97_003FEnumerable_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AFont_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003Fac1fd7f0979d4d18d1889282890cadbf75c95a4aec84bdcbda0f0441cf5d9de_003FFont_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AHBoxContainer_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003F70b41e25b148a7d63a11a342599f6f4cb3bf0765c83377dd70892d5726ac7e_003FHBoxContainer_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AIAdditionOperators_00603_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F94e5a9ba04d74002870fbeeec71ff78cca738_003F89_003F187bd5e1_003FIAdditionOperators_00603_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AIEnumerable_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003F53428d95742549e8968df3e76ebd1d7de8e928_003F_005Fec32c_003FIEnumerable_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AIEquatable_00601_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F94e5a9ba04d74002870fbeeec71ff78cca738_003F45_003F57b67f3b_003FIEquatable_00601_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
@@ -49,17 +51,22 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AToolAttribute_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F1c378f459c054fecaf4484a0fa6d44c055a800_003Fc2_003F1d80051a_003FToolAttribute_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AVector2_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F1c378f459c054fecaf4484a0fa6d44c055a800_003Fc3_003F01f4e00b_003FVector2_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AVector2_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003F85991ada4f172794d6b72aaa7b77358e08715664e2148748f8bb1a327b6ed8_003FVector2_002Ecs_002Fz_003A2_002D1/@EntryIndexedValue">ForceIncluded</s:String>
+    <s:String
+            x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AWindow_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003F68c8cd422de9ebfe4ded2caa501b3b33e2dd8aec11f2fa667c2eb74eddd_003FWindow_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\brand\.nuget\packages\bsharp.core\1.0.1\lib\net8.0\BSharp.Core.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestProjectMapping/=6C64A154_002D4DD9_002D4410_002DB4CE_002D27E2F187A3C2/@EntryIndexedValue">FE5FE180-3553-4D96-B406-7D275ABA0582</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/CreateUnitTestDialog/TestTemplateMapping/=NUnit3x/@EntryIndexedValue">db4927dd-2e12-48a7-9a84-2b7e3e31b9c8</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e597cd6b_002Dc486_002D478f_002Dbe00_002Ddc88728ce80b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SizeToFit" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+    <s:String
+            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e597cd6b_002Dc486_002D478f_002Dbe00_002Ddc88728ce80b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="SizeToFit" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::FE5FE180-3553-4D96-B406-7D275ABA0582::net9.0::maidoc.Tests.Scenes.GodotHelpersTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::FE5FE180-3553-4D96-B406-7D275ABA0582::net9.0::maidoc.Tests.Core.HelpersTest.NeighborPairsTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=fb5330e9_002D0265_002D4600_002D92d5_002Db9b9fed63642/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="SizeToFit #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+    <s:String
+            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=fb5330e9_002D0265_002D4600_002D92d5_002Db9b9fed63642/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="SizeToFit #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::FE5FE180-3553-4D96-B406-7D275ABA0582::net9.0::maidoc.Tests.Scenes.GodotHelpersTest.SideMapTest&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::FE5FE180-3553-4D96-B406-7D275ABA0582::net9.0::maidoc.Tests.Scenes.GodotHelpersTest.Rect2ScaledTest&lt;/TestId&gt;&#xD;
@@ -91,5 +98,6 @@
     &lt;TestId&gt;NUnit3x::FE5FE180-3553-4D96-B406-7D275ABA0582::net9.0::maidoc.Tests.Scenes.GodotHelpersTest.NormalizeLargerAxis(3.1415927f,3.1415927f)&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::FE5FE180-3553-4D96-B406-7D275ABA0582::net9.0::maidoc.Tests.Scenes.GodotHelpersTest.Rect2Resize_SpecificExample&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;NUnit3x::FE5FE180-3553-4D96-B406-7D275ABA0582::net9.0::maidoc.Tests.Scenes.GodotHelpersTest.TextDecorationFlagsTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::FE5FE180-3553-4D96-B406-7D275ABA0582::net9.0::maidoc.Tests.Core.HelpersTest.NeighborPairsTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

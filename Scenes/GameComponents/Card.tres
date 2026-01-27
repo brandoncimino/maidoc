@@ -2,3 +2,6 @@
 
 [resource]
 default_font_size = 7
+CardFace/font_sizes/CardBody = 7
+CardFace/font_sizes/CardName = 9
+CardFace/styles/CardFrame = null

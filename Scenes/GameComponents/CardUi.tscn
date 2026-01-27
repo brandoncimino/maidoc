@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://3nfj2gt8kdru"]
+
+[ext_resource type="Script" uid="uid://dwvp804evrhrv" path="res://Scenes/GameComponents/CardPanel.cs" id="1_nfiv2"]
+[ext_resource type="Texture2D" uid="uid://yp02qssscnss" path="res://Sprites/card_back.png" id="3_r2h4h"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v4bik"]
+corner_radius_top_left = 13
+corner_radius_top_right = 13
+corner_radius_bottom_right = 13
+corner_radius_bottom_left = 13
+shadow_size = 10
+
+[node name="CardCanvas" type="PanelContainer"]
+custom_minimum_size = Vector2(125, 175)
+offset_right = 125.0
+offset_bottom = 175.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_v4bik")
+script = ExtResource("1_nfiv2")
+
+[node name="Back" type="TextureRect" parent="."]
+visible = false
+layout_mode = 2
+texture = ExtResource("3_r2h4h")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer"]
+layout_mode = 2
+text = "This legendary dragon is a powerful engine of destruction. Virtually invincible, very few have faced this awesome creature and lived to tell the tale."

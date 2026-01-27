@@ -10,12 +10,26 @@ public static partial class GodotHelpers {
         _                       => throw new ArgumentOutOfRangeException(nameof(side), side, null)
     };
 
+    public static Vector2.Axis Other(this Vector2.Axis axis) => axis switch {
+        Vector2.Axis.X => Vector2.Axis.Y,
+        Vector2.Axis.Y => Vector2.Axis.X,
+        _              => throw new ArgumentOutOfRangeException(nameof(axis), axis, null)
+    };
+
     public static Corner Inverse(this Corner corner) => corner switch {
         Corner.TopLeft     => Corner.BottomRight,
         Corner.TopRight    => Corner.BottomLeft,
         Corner.BottomRight => Corner.TopLeft,
         Corner.BottomLeft  => Corner.TopRight,
         _                  => throw new ArgumentOutOfRangeException(nameof(corner), corner, null)
+    };
+
+    public static float GetSide(this Rect2 rect2, Side side) => side switch {
+        Side.Left   => rect2.Position.X,
+        Side.Top    => rect2.Position.Y,
+        Side.Right  => rect2.End.X,
+        Side.Bottom => rect2.End.Y,
+        _           => throw new ArgumentOutOfRangeException(nameof(side), side, null)
     };
 
     /// <summary>
@@ -78,7 +92,7 @@ public static partial class GodotHelpers {
         return new Rect2(position, size);
     }
 
-    public static float Width(this  Rect2 rect2) => rect2.Size.X;
+    public static float Width(this Rect2 rect2) => rect2.Size.X;
 
     public static float Height(this Rect2 rect2) => rect2.Size.Y;
 
@@ -152,5 +166,9 @@ public static partial class GodotHelpers {
             rect2.Position * multiplier,
             rect2.Size     * multiplier
         );
+    }
+
+    public static bool IsFocused(this Control control) {
+        return control.GetViewport()?.GuiGetFocusOwner() == control;
     }
 }

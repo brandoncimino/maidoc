@@ -84,7 +84,7 @@ public partial class NotificationSceneRoot : Control,
 
     public readonly record struct SpawnInput() {
         public required Notification Notification       { get; init; }
-        public          TimeSpan?    DurationBeforeFade { get; init; } = TimeSpan.FromSeconds(3);
+        public          TimeSpan?    DurationBeforeFade { get; init; } = TimeSpan.FromSeconds(5);
         public          TimeSpan     FadeDuration       { get; init; } = TimeSpan.FromSeconds(.1);
     }
 }

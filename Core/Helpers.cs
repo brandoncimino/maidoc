@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -24,6 +25,14 @@ public static class Helpers {
         foreach (var it in stuff) {
             action(it);
         }
+    }
+
+    public static IEnumerable<T> Peek<T>(this IEnumerable<T> stuff, Action<T> action) {
+        return stuff.Select(it => {
+                action(it);
+                return it;
+            }
+        );
     }
 
     public static int Abs(this int i) => Math.Abs(i);
@@ -113,5 +122,38 @@ public static class Helpers {
             (true, >= 1) => to,
             _            => from + (to - from) * amount01
         };
+    }
+
+    /// <summary>
+    /// AKA "Perp" or "Plerp".
+    /// </summary>
+    /// <param name="reference"></param>
+    /// <param name="computed"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T LerpProportional<T>(
+        (T from, T to, T actual) reference,
+        (T from, T to)           computed
+    ) where T : IFloatingPoint<T> {
+        var referenceRange        = reference.to     - reference.from;
+        var referenceActualOffset = reference.actual - reference.from;
+        var lerpAmount            = referenceActualOffset / referenceRange;
+        return Lerp(computed.from, computed.to, lerpAmount);
+    }
+
+    public static IEnumerable<(T previous, T next)> NeighborPairs<T>(this IEnumerable<T> source) {
+        using var erator = source.GetEnumerator();
+
+        if (erator.MoveNext() == false) {
+            yield break;
+        }
+
+        var previous = erator.Current;
+
+        while (erator.MoveNext()) {
+            var current = erator.Current;
+            yield return (previous, current);
+            previous = current;
+        }
     }
 }

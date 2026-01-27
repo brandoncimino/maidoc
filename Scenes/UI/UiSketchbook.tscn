@@ -1,0 +1,300 @@
+[gd_scene load_steps=7 format=3 uid="uid://c8d08obfpv2kb"]
+
+[ext_resource type="PackedScene" uid="uid://3nfj2gt8kdru" path="res://Scenes/GameComponents/CardUi.tscn" id="1_vcfrp"]
+[ext_resource type="Script" uid="uid://bh24qahy5k4be" path="res://Scenes/UI/HandBoxContainer.cs" id="2_vcfrp"]
+[ext_resource type="Script" uid="uid://d1j15ei10mgf4" path="res://Scenes/UI/NavigationSketchbook.cs" id="3_73vnk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vcfrp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_73vnk"]
+bg_color = Color(0.79607844, 0.16470589, 0.6, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_27x3b"]
+bg_color = Color(0.05882353, 0.6, 0.6, 1)
+
+[node name="UiSketchbook" type="Control" node_paths=PackedStringArray("InitialFocus")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 96.0
+offset_top = 462.0
+offset_right = 96.0
+offset_bottom = 462.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_73vnk")
+InitialFocus = NodePath("Part 2/Button_A")
+
+[node name="Part 1" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Part 1"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 0
+offset_left = 198.0
+offset_top = 63.0
+offset_right = 798.0
+offset_bottom = 238.0
+script = ExtResource("2_vcfrp")
+MaxFanAngleDegrees = 15.0
+
+[node name="CardCanvas" parent="Part 1/HBoxContainer" instance=ExtResource("1_vcfrp")]
+layout_mode = 2
+size_flags_horizontal = 1
+size_flags_vertical = 1
+
+[node name="CardCanvas2" parent="Part 1/HBoxContainer" instance=ExtResource("1_vcfrp")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="Part 1"]
+layout_mode = 0
+offset_left = 41.0
+offset_top = 13.0
+offset_right = 166.0
+offset_bottom = 188.0
+
+[node name="CardCanvas" parent="Part 1/PanelContainer" instance=ExtResource("1_vcfrp")]
+layout_mode = 2
+
+[node name="CardCanvas2" parent="Part 1/PanelContainer" instance=ExtResource("1_vcfrp")]
+layout_mode = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Part 1"]
+layout_mode = 0
+offset_left = 88.0
+offset_top = 245.0
+offset_right = 328.0
+offset_bottom = 420.0
+stretch_mode = 3
+
+[node name="CardCanvas" parent="Part 1/AspectRatioContainer" instance=ExtResource("1_vcfrp")]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Part 1/AspectRatioContainer"]
+layout_mode = 2
+text = "Stuff goes here"
+
+[node name="Control" type="HBoxContainer" parent="Part 1"]
+clip_contents = true
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 0
+offset_left = 580.0
+offset_top = 278.0
+offset_right = 1133.0
+offset_bottom = 301.0
+script = ExtResource("2_vcfrp")
+MaxFanAngleDegrees = 15.0
+
+[node name="Button" type="Button" parent="Part 1/Control"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_vcfrp")
+text = "morasdfdsfad"
+
+[node name="Button2" type="Button" parent="Part 1/Control"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_73vnk")
+text = "soome"
+
+[node name="Button3" type="Button" parent="Part 1/Control"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_27x3b")
+text = "also here"
+
+[node name="Button4" type="Button" parent="Part 1/Control"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_vcfrp")
+text = "morasdfmo"
+
+[node name="Button5" type="Button" parent="Part 1/Control"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_73vnk")
+text = "soome"
+
+[node name="Button6" type="Button" parent="Part 1/Control"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_27x3b")
+text = "Stuff goes here alsos"
+
+[node name="ReferencePanel" type="Panel" parent="Part 1"]
+layout_mode = 0
+offset_left = 580.0
+offset_top = 120.0
+offset_right = 980.0
+offset_bottom = 160.0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Part 1"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 0
+offset_left = 580.0
+offset_top = 53.0
+offset_right = 1096.0
+offset_bottom = 84.0
+script = ExtResource("2_vcfrp")
+MaxFanAngleDegrees = 15.0
+
+[node name="Button" type="Button" parent="Part 1/HBoxContainer2"]
+visible = false
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "50"
+
+[node name="Button2" type="Button" parent="Part 1/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "100"
+
+[node name="Button3" type="Button" parent="Part 1/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "100"
+
+[node name="Button4" type="Button" parent="Part 1/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "100"
+
+[node name="Button5" type="Button" parent="Part 1/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "100"
+
+[node name="Button6" type="Button" parent="Part 1/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "100"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Part 1"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 0
+offset_left = 580.0
+offset_top = 174.0
+offset_right = 1184.0
+offset_bottom = 205.0
+script = ExtResource("2_vcfrp")
+MaxFanAngleDegrees = 15.0
+
+[node name="Button" type="Button" parent="Part 1/HBoxContainer3"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "300"
+
+[node name="Button2" type="Button" parent="Part 1/HBoxContainer3"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+text = "300"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Part 1"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 0
+offset_left = 580.0
+offset_top = 219.0
+offset_right = 980.0
+offset_bottom = 250.0
+alignment = 1
+script = ExtResource("2_vcfrp")
+MaxFanAngleDegrees = 15.0
+
+[node name="Button" type="Button" parent="Part 1/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="Button2" type="Button" parent="Part 1/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="Button3" type="Button" parent="Part 1/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="PanelContainer2" type="PanelContainer" parent="Part 1"]
+layout_mode = 0
+offset_left = 583.0
+offset_top = 327.0
+offset_right = 623.0
+offset_bottom = 367.0
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="Part 1/PanelContainer2"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+alignment = 1
+script = ExtResource("2_vcfrp")
+
+[node name="Button" type="Button" parent="Part 1/PanelContainer2/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="Button2" type="Button" parent="Part 1/PanelContainer2/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="Button3" type="Button" parent="Part 1/PanelContainer2/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="Button4" type="Button" parent="Part 1/PanelContainer2/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="Button5" type="Button" parent="Part 1/PanelContainer2/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="Button6" type="Button" parent="Part 1/PanelContainer2/HBoxContainer4"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+text = "190"
+
+[node name="NavigationSketchbook" type="HBoxContainer" parent="Part 1"]
+visible = false
+layout_mode = 0
+offset_left = 190.0
+offset_top = -179.0
+offset_right = 300.0
+offset_bottom = -139.0
+script = ExtResource("3_73vnk")
+
+[node name="First" type="Button" parent="Part 1/NavigationSketchbook"]
+layout_mode = 2
+text = "First"
+
+[node name="Second" type="Button" parent="Part 1/NavigationSketchbook"]
+layout_mode = 2
+focus_neighbor_right = NodePath("../First")
+focus_mode = 0
+text = "Second"
+
+[node name="Third" type="Button" parent="Part 1/NavigationSketchbook"]
+layout_mode = 2
+focus_neighbor_right = NodePath("../Second")
+text = "Third"
+
+[node name="Part 2" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Button_A" type="Button" parent="Part 2"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Button A"
+
+[node name="Button_B" type="Button" parent="Part 2"]
+layout_mode = 0
+offset_left = 97.0
+offset_right = 173.0
+offset_bottom = 31.0
+text = "Button B"

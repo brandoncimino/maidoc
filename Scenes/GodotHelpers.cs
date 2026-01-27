@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -49,9 +48,16 @@ public static partial class GodotHelpers {
         var longestKey = keys.IsEmpty() ? 0 : keys.Max(it => it.Length);
 
         return stuff.Select((it, index) =>
-                $"{indent}{keys[index].PadRight(longestKey)}{keyValueSeparator}{it.Value.OrNullPlaceholder()}"
-            )
-            .JoinString(separator: "\n", prefix: $"{label}\n");
+                        $"{indent}{keys[index].PadRight(longestKey)}{keyValueSeparator}{it.Value.ToBlogString()}"
+                    )
+                    .JoinString(separator: "\n", prefix: $"{label}\n");
+    }
+
+    private static string ToBlogString<T>(this T value) {
+        return value switch {
+            Node node => $"{node.Name} {node}",
+            _         => value.OrNullPlaceholder()
+        };
     }
 
     public static T blog<T, A>(
@@ -487,14 +493,14 @@ public static partial class GodotHelpers {
         var msg = new StringBuilder(fullLabel);
         if (fullLabel.Length >= labelColumnWidth) {
             msg.Append('\n')
-                .Append(' ', labelColumnWidth)
-                .Append('↳')
-                .Append(' ');
+               .Append(' ', labelColumnWidth)
+               .Append('↳')
+               .Append(' ');
         }
         else {
             msg.Append(' ')
-                .Append('→')
-                .Append(' ');
+               .Append('→')
+               .Append(' ');
         }
 
         msg.Append(value.OrNullPlaceholder());
@@ -502,39 +508,6 @@ public static partial class GodotHelpers {
         GD.Print(msg.ToString());
 
         return value;
-    }
-
-    #endregion
-
-    #region Finding Nodes
-
-    public static IEnumerable<Node> EnumerateChildren(
-        this Node self,
-        int       depth           = int.MaxValue,
-        bool      includeInternal = false
-    ) {
-        for (int i = 0; i < self.GetChildCount(includeInternal); i++) {
-            var child = self.GetChild(i);
-            yield return child;
-
-            if (depth > 1) {
-                foreach (var grandChild in
-                         child.EnumerateChildren(depth: depth - 1, includeInternal: includeInternal)) {
-                    yield return grandChild;
-                }
-            }
-        }
-    }
-
-    public static T RequireOnlyChild<T>(this Node self, int depth = int.MaxValue, bool includeInternal = false)
-        where T : Node {
-        return self.EnumerateChildren(depth, includeInternal)
-            .OfType<T>()
-            .Single();
-    }
-
-    public static IEnumerable<Node> GetSiblings(this Node self, bool includeInternal = false) {
-        return self.GetParent()?.EnumerateChildren(depth: 1, includeInternal: includeInternal) ?? [];
     }
 
     #endregion
@@ -766,8 +739,8 @@ public static partial class GodotHelpers {
         PaddingResizeMode resizeMode
     ) {
         var actualAvailableSpace = Require.NotNull(control.GetParentControl())
-            .Size
-            .GetAxis(side.Axis());
+                                          .Size
+                                          .GetAxis(side.Axis());
 
         actualAvailableSpace.blog();
 

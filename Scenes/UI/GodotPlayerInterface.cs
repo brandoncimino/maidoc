@@ -1,5 +1,6 @@
 using Godot;
 using maidoc.Core;
+using maidoc.Core.Cards;
 
 namespace maidoc.Scenes.UI;
 
@@ -24,12 +25,16 @@ public partial class GodotPlayerInterface : CanvasLayer,
 
     public void NotifyPlayer(Notification notification) {
         _notificationContainer.Get(this)
-            .SpawnChild<NotificationSceneRoot, NotificationSceneRoot.SpawnInput>(
-                new NotificationSceneRoot.SpawnInput() {
-                    Notification = notification
-                }
-            );
+                              .SpawnChild<NotificationSceneRoot, NotificationSceneRoot.SpawnInput>(
+                                  new NotificationSceneRoot.SpawnInput() {
+                                      Notification = notification
+                                  }
+                              );
     }
 
     public readonly record struct SpawnInput { }
+
+    public void ClickCard(PaperCard paperCard) {
+        GD.Print($"TODO: {nameof(ClickCard)}");
+    }
 }

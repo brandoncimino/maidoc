@@ -5,6 +5,7 @@ using maidoc.Core.NormalCreatures;
 
 namespace maidoc.Scenes.GameComponents;
 
+[Obsolete(message: $"Use {nameof(CardScene3)} instead. This is kept for reference.")]
 [Tool]
 public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardSceneRoot.Input>,
     ISceneRoot<CardSceneRoot, CardSceneRoot.Input> {
@@ -16,6 +17,7 @@ public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardS
     private readonly LazyChild<CollisionShape2D> _clickBox           = new("ClickBox");
     private readonly LazyChild<RichTextLabel>    _text               = new("Text");
     private readonly LazyChild<TextureRect>      _cardFaceBackground = new("Background");
+    private readonly LazyChild<Sprite2D>         _cardBack           = new("Back");
 
     private const float OneMeterPlayerCardHeight = 1;
     private const float OneMeterPlayingCardWidth = 1 * CardAspectRatio.Standard;
@@ -25,6 +27,16 @@ public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardS
 
     [Export]
     public float MaximumFontSizeInMeters = .1f;
+
+    private bool _faceDown;
+
+    public bool FaceDown {
+        get => _faceDown;
+        set {
+            _faceDown                   = value;
+            _cardBack.Get(this).Visible = value;
+        }
+    }
 
     public override void _Ready() { }
 
@@ -74,9 +86,7 @@ public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardS
     }
 
     public CardSceneRoot InitializeSelf(Input input) {
-        if (input is { MyCard: NormalCreatureCard normalCreatureCard }) {
-            _text.Get(this).Append(normalCreatureCard.CreatureData);
-        }
+        if (input is { MyCard: NormalCreatureCard normalCreatureCard }) { }
 
         return this;
     }
@@ -93,5 +103,9 @@ public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardS
 
     public static CardSceneRoot InstantiateRawScene() {
         return PackedScene.Instantiate<CardSceneRoot>();
+    }
+
+    public void GrabFocus() {
+        throw new NotImplementedException();
     }
 }

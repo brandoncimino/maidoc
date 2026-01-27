@@ -21,6 +21,7 @@ public sealed class GodotBetween {
 
     public required Referee              Referee              { get; init; }
     public required GodotPlayerInterface GodotPlayerInterface { get; init; }
+    public required SceneFactory         SceneFactory         { get; init; }
 
     public void DrawFromDeck(PlayerId playerId) {
         _eventQueue.AddRange(Referee.DrawFromDeck(playerId));
@@ -30,50 +31,22 @@ public sealed class GodotBetween {
         _eventQueue.AddRange(Referee.ShuffleDeck(playerId, random ?? Random.Shared));
     }
 
-    public void ConsumeAllEvents() {
-        while (_eventQueue.Count > 0) {
-            var next = _eventQueue.Dequeue();
-            Consume(next);
+    public bool TryConsumeNextEvent(
+        Action<IGameEvent> consumer
+    ) {
+        if (_eventQueue.TryDequeue(out var gameEvent)) {
+            consumer(gameEvent);
+            return true;
         }
+
+        return false;
     }
 
-    private bool Consume(IGameEvent gameEvent) {
-        return gameEvent switch {
-            AdmonitionEvent admonitionEvent => ConsumeAdmonitionEvent(admonitionEvent),
-            DeckShuffledEvent deckShuffledEvent => ConsumeDeckShuffledEvent(deckShuffledEvent),
-            CardAddedToHand cardAddedToHand => ConsumeCardAddedToHandEvent(),
-            CardMovedEvent cardMovedEvent => ConsumeCardMovedEvent(),
-            _ => throw new NotImplementedException($"I don't know how to handle: {gameEvent}")
-        };
-    }
-
-    private static bool ConsumeCardMovedEvent() {
-        throw new NotImplementedException();
-    }
-
-    private static bool ConsumeCardAddedToHandEvent() {
-        throw new NotImplementedException();
-    }
-
-    private bool ConsumeDeckShuffledEvent(DeckShuffledEvent deckShuffledEvent) {
-        return NotifyPlayer(
-            new() {
-                Message = $"{deckShuffledEvent.PlayerId} player deck shuffled."
-            }
-        );
-    }
-
-    private bool ConsumeAdmonitionEvent(AdmonitionEvent admonitionEvent) {
-        return NotifyPlayer(
-            new Notification() {
-                Message = admonitionEvent.Message,
-                Tone    = Notification.NotificationTone.Negative
-            }
-        );
-    }
-
-    private bool NotifyPlayer(Notification notification) {
-        GodotPlayerInterface.NotifyPlayer(notification);
-        return true;
+    public void ConsumeAllEvents(
+        Action<IGameEvent> consumer
+    ) {
+        while (_eventQueue.Count > 0) {
+            consumer(_eventQueue.Dequeue());
+        }
     }
 }

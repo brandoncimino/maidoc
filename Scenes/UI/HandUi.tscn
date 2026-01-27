@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://k3pff6v84pv3"]
+
+[ext_resource type="Script" uid="uid://bh24qahy5k4be" path="res://Scenes/UI/HandBoxContainer.cs" id="1_hwgk6"]
+[ext_resource type="PackedScene" uid="uid://3nfj2gt8kdru" path="res://Scenes/GameComponents/CardUi.tscn" id="2_c4ptt"]
+
+[node name="HandUi" type="HBoxContainer"]
+custom_minimum_size = Vector2(800, 0)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -127.0
+offset_top = -175.0
+offset_right = 127.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+script = ExtResource("1_hwgk6")
+
+[node name="CardCanvas" parent="." instance=ExtResource("2_c4ptt")]
+layout_mode = 2
+
+[node name="CardCanvas2" parent="." instance=ExtResource("2_c4ptt")]
+layout_mode = 2

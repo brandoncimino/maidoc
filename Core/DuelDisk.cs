@@ -26,10 +26,15 @@ public sealed class DuelDisk {
         PlayerId  = playerId;
 
         PaperZones = Enum.GetValues<DuelDiskZoneId>()
-            .ToImmutableDictionary(
-                it => it,
-                it => new PaperCardGroup()
-            );
+                         .ToImmutableDictionary(
+                             it => it,
+                             it => new PaperCardGroup() {
+                                 Address = new() {
+                                     PlayerId = playerId,
+                                     ZoneId   = it
+                                 }
+                             }
+                         );
 
         Rows = new(
             playerId,

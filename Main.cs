@@ -3,7 +3,6 @@ using Godot;
 using maidoc.Core;
 using maidoc.Core.Cards;
 using maidoc.Scenes;
-using maidoc.Scenes.GameComponents;
 using maidoc.Scenes.UI;
 
 namespace maidoc;
@@ -13,8 +12,8 @@ public partial class Main : Node {
     public bool DebugMenuEnabled { get; set; } = true;
 
     private readonly LazyChild<SceneFactory> _sceneFactory = new(parent => new SceneFactory()
-        .Named(nameof(SceneFactory))
-        .AsChildOf(parent)
+                                                                           .Named(nameof(SceneFactory))
+                                                                           .AsChildOf(parent)
     );
 
     private readonly LazyChild<GodotPlayerInterface> _godotPlayerInterface = new();
@@ -51,19 +50,16 @@ public partial class Main : Node {
 
         var godotBetween = new GodotBetween() {
             Referee              = referee,
-            GodotPlayerInterface = _godotPlayerInterface.Get(this)
+            GodotPlayerInterface = _godotPlayerInterface.Get(this),
+            SceneFactory         = _sceneFactory.Get(this)
         };
 
         var duelRunnerInput = new DuelRunner.SpawnInput() {
-            BoardSpawnInput = new BoardView.SpawnInput {
-                PlayerId         = default,
-                CellSizeInMeters = new Vector2(1.5f, 1.5f),
-                OnCellClick      = playerInterface.ClickCell,
-                LaneCount        = 4
-            },
-            SceneFactory = _sceneFactory.Get(this),
-            GodotBetween = godotBetween,
-            PaperPusher  = paperPusher
+            PaperPusher          = paperPusher,
+            GodotBetween         = godotBetween,
+            GodotPlayerInterface = _godotPlayerInterface.Get(this),
+            LaneCount            = 4,
+            OnCellClick          = playerInterface.ClickCell
         };
 
         _duelRunner = _sceneFactory.Get(this).SpawnDuelRunner(duelRunnerInput);
@@ -72,7 +68,8 @@ public partial class Main : Node {
             _godotPlayerInterface.Get(this).SpawnChild<DebugMenu, DebugMenu.SpawnInput>(
                 new DebugMenu.SpawnInput() {
                     GodotBetween = godotBetween,
-                    PaperView    = paperPusher
+                    PaperView    = paperPusher,
+                    DuelRunner   = _duelRunner
                 }
             );
         }

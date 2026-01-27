@@ -19,7 +19,7 @@ public class PaperCardGroup : IPaperZone {
     /// </summary>
     private ImmutableArray<SerialNumber> _cards = [];
 
-    public ZoneAddress Address { get; init; }
+    public required ZoneAddress Address { get; init; }
 
     [MustUseReturnValue]
     public SerialNumber DrawAt(Index index) {

@@ -1,12 +1,15 @@
-using System;
-using System.Collections.Immutable;
 using Godot;
-using maidoc.Core.Cards;
 
 namespace maidoc.Scenes.GameComponents;
 
-public partial class Deck : Node2D, ISceneRoot<Deck, ImmutableArray<PaperCard>> {
-    public Deck InitializeSelf(ImmutableArray<PaperCard> input) {
-        throw new NotImplementedException();
+public partial class Deck : Node2D, ISceneRoot<Deck, Deck.SpawnInput> {
+    public Deck InitializeSelf(SpawnInput input) {
+        return this;
     }
+
+    public static Deck InstantiateRawScene() {
+        return new Deck();
+    }
+
+    public readonly record struct SpawnInput;
 }
