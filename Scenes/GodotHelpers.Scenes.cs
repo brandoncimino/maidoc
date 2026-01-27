@@ -10,8 +10,8 @@ public static partial class GodotHelpers {
         // 📎 `_Ready` will be called as soon as the `Node` has a parent.
         //    Therefore, it is vital that `InitializeSelf` is called *FIRST*.
         return TSceneRoot.InstantiateRawScene()
-            .InitializeSelf(input)
-            .AsChildOf(parent);
+                         .InitializeSelf(input)
+                         .AsChildOf(parent);
     }
 
     public static T Named<T>(
@@ -42,6 +42,16 @@ public static partial class GodotHelpers {
         bool   forceReadableName = false
     ) where T : Node {
         sibling.AddSibling(self, forceReadableName);
+        return self;
+    }
+
+    public static T WithChild<T>(
+        this T            self,
+        Node              child,
+        bool              forceReadableName = false,
+        Node.InternalMode internalMode      = Node.InternalMode.Disabled
+    ) where T : Node {
+        self.AddChild(child, forceReadableName, internalMode);
         return self;
     }
 }
