@@ -3,9 +3,7 @@
 [ext_resource type="Script" uid="uid://df2ft6eglvoyb" path="res://Scenes/UI/DebugMenu.cs" id="1_abryh"]
 
 [node name="DebugMenu" type="PanelContainer"]
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(300, 0)
+offset_right = 200.0
+offset_bottom = 200.0
 script = ExtResource("1_abryh")
-
-[node name="HFlowContainer" type="VFlowContainer" parent="."]
-layout_mode = 2

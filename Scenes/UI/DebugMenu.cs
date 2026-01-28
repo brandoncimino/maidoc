@@ -10,9 +10,10 @@ using Side = Godot.Side;
 
 namespace maidoc.Scenes;
 
-public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu.SpawnInput> {
+public partial class DebugMenu : Control, ISceneRoot<DebugMenu, DebugMenu.SpawnInput> {
     private readonly Disenfranchised<Container> _menuContainer = new();
-    private readonly List<DebugMenuItem>        _menuItems     = [];
+
+    private readonly List<DebugMenuItem> _menuItems = [];
 
     private static PackedScene? _packedScene;
 
@@ -28,7 +29,17 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu
     }
 
     public DebugMenu InitializeSelf(SpawnInput spawnInput) {
-        _menuContainer.Enfranchise(this.RequireOnlyChild<Container>());
+        _menuContainer.Enfranchise(() => {
+                var foldable = new FoldableContainer() {
+                        Title  = "Debug Menu",
+                        Folded = false
+                    }
+                    .AsChildOf(this);
+
+                return new VBoxContainer()
+                    .AsChildOf(foldable);
+            }
+        );
 
         var playerInterface = spawnInput.GodotBetween;
         AddMenuItem(() => "Start Game", playerInterface.Referee.StartGame);
@@ -40,23 +51,36 @@ public partial class DebugMenu : PanelContainer, ISceneRoot<DebugMenu, DebugMenu
         // AddMenuItem(() => "Confirm",  () => playerInterface.TryConfirm());
         AddMenuItem(() => "End Turn", () => playerInterface.Referee.EndTurn());
 
-        AddMenuItem(
-            foldableTitle: () =>
-                $"🎯 Focus {GetViewport().GuiGetFocusOwner().OrNullPlaceholder(static it => $"{it.Name}")}",
-            text: () => GetViewport().GuiGetFocusOwner()?.FocusWrapper().DescribeFocus() ?? "",
-            initiallyFolded: true
-        );
-
-        AddMenuItem(() => "🔍 Grab initial focus", () => spawnInput.DuelRunner.FocusOnHand(default));
-        AddMenuItem(() => "❌ Lose focus",          () => GetViewport().GuiReleaseFocus());
+        BuildFocusMenu(spawnInput);
 
         foreach (var playerId in Players.Ids) {
             BuildPlayerPanel(playerId, spawnInput);
         }
 
-        BuildEventQueuePanel(spawnInput);
+        // BuildEventQueuePanel(spawnInput);
 
         return this;
+    }
+
+    private void BuildFocusMenu(SpawnInput spawnInput) {
+        var focusMenuContainer = new VBoxContainer() {
+            Name = "Focus Menu Container"
+        }.AsChildOf(_menuContainer.Value);
+
+        AddMenuItem(
+            foldableTitle: () =>
+                $"🎯 Focus {GetViewport().GuiGetFocusOwner().OrNullPlaceholder(static it => $"{it.Name}")}",
+            text: () => GetViewport().GuiGetFocusOwner()?.FocusWrapper().DescribeFocus() ?? "",
+            initiallyFolded: true,
+            container: focusMenuContainer
+        );
+
+        AddMenuItem(
+            () => "🔍 Grab initial focus",
+            () => spawnInput.DuelRunner.FocusOnHand(default),
+            focusMenuContainer
+        );
+        AddMenuItem(() => "❌ Lose focus", () => GetViewport().GuiReleaseFocus(), focusMenuContainer);
     }
 
     private void BuildEventQueuePanel(SpawnInput spawnInput) {

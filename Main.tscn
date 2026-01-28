@@ -15,3 +15,5 @@ script = ExtResource("1_glv2v")
 position = Vector2(640, 720)
 
 [node name="Blue Hand" parent="PlayerInterface" instance=ExtResource("3_r0du0")]
+position = Vector2(640, 0)
+rotation = 3.1415927
