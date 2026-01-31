@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3 uid="uid://dy37p3hhukbba"]
+
+[ext_resource type="Script" uid="uid://3xdg5oe3sst0" path="res://Scenes/RectMarker.cs" id="1_eodak"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eodak"]
+
+[node name="RectMarker" type="Marker2D"]
+script = ExtResource("1_eodak")
+BorderColor = Color(2.7915835e-06, 0.5991945, 0.6988358, 1)
+FillColor = Color(2.7915835e-06, 0.5991945, 0.6988358, 1)
+BorderWidth = 1.0
+Fill = true
+SizeInMeters = Vector2(1, 1)
+SizeInPixels = Vector2(100, 100)
+SizeInScreens = Vector2(0.078125, 0.1388889)
+SizeInParents = Vector2(nan, nan)
+
+[node name="ReferenceRect" type="ReferenceRect" parent="."]
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+pivot_offset = Vector2(50, 50.000004)
+border_color = Color(2.7915835e-06, 0.5991945, 0.6988358, 1)
+editor_only = false
+
+[node name="RichTextLabel" type="RichTextLabel" parent="ReferenceRect"]
+self_modulate = Color(2.7915835e-06, 0.5991945, 0.6988358, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_eodak")
+text = "RectMarker
+🌍 1 ⨉ 1 m"
