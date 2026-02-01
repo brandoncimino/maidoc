@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Godot;
+using Godot.Collections;
 
 namespace maidoc.Scenes;
 
@@ -20,6 +23,14 @@ public partial class RectMarker : Node2D {
     private const string Meters  = "suffix:m";
     private const string Pixels  = "suffix:px";
     private const string Screens = "suffix:screens";
+
+    #region Rect2
+
+    public Rect2 RectInPixels  => new(PositionInPixels, SizeInPixels);
+    public Rect2 RectInMeters  => new(PositionInMeters, SizeInMeters);
+    public Rect2 RectInScreens => new(PositionInScreens, SizeInScreens);
+
+    #endregion
 
     /// <summary>
     /// What the <see cref="RectMarker.SizeInScreens"/> values are proportional to, i.e. what you multiply them by to get the <see cref="RectMarker.SizeInPixels"/>.
@@ -94,8 +105,17 @@ public partial class RectMarker : Node2D {
     [Export(hintString: "suffix:parents")]
     [ExportGroup(SizeGroup, SizePrefix)]
     public Vector2 SizeInParents {
-        get => SizeInPixels.GetByRatio(GetParentSize());
-        set => SizeInPixels = SizeInPixels.SetByRatio(value, GetParentSize);
+        get =>
+            GetParentSize() switch {
+                { } parentSize => SizeInPixels.GetByRatio(parentSize),
+                _              => default
+            };
+        set {
+            if (GetParentSize() is { } parentSize) {
+                GD.Print($"Setting {nameof(SizeInPixels)} to {value} * {nameof(parentSize)} {parentSize}");
+                SizeInPixels = Ratio2D.CalculateActual(value, parentSize, ReferenceAxis.Corresponding);
+            }
+        }
     }
 
     #endregion
@@ -169,6 +189,39 @@ public partial class RectMarker : Node2D {
         set => OffsetInPixels = Ratio2D.CalculateActual(value, SizeInPixels, SelfRatioAxis);
     }
 
+    public override Array<Dictionary> _GetPropertyList() {
+        IEnumerable<GodotProperty> properties = [
+            GodotProperty.Header(SizeGroup),
+            SizeInPixels.CreateGodotProperty(),
+            SizeInMeters.CreateGodotProperty(),
+            SizeInScreens.CreateGodotProperty(),
+            SizeInParents.CreateGodotProperty(),
+
+            GodotProperty.Header(PositionGroup),
+            PositionInPixels.CreateGodotProperty(),
+            PositionInMeters.CreateGodotProperty(),
+            PositionInScreens.CreateGodotProperty(),
+
+            GodotProperty.Header(OffsetGroup, GodotProperty.HeaderType.Subgroup),
+            OffsetInPixels.CreateGodotProperty(),
+            OffsetInMeters.CreateGodotProperty(),
+            OffsetInScreens.CreateGodotProperty(),
+            OffsetInSelves.CreateGodotProperty()
+        ];
+
+        return [
+            ..properties.Select(it => it.ToGodotDictionary())
+        ];
+    }
+
+    public Vector2 BonusProperty { get; set; }
+
+    // public override Variant _Get(StringName property) {
+    //     if (property == PropertyName.SizeInMeters) {
+    //
+    //     }
+    // }
+
     #endregion
 
     #endregion
@@ -198,19 +251,31 @@ public partial class RectMarker : Node2D {
     //     };
     // }
 
+    private string? CanUpdate() {
+        if (!IsInsideTree()) {
+            return $"{nameof(IsInsideTree)} is false.";
+        }
+
+        return null;
+    }
 
     private void UpdateSizeInPixels(
-        Vector2 size,
-        Vector2 offset
+        Vector2                   size,
+        Vector2                   offset,
+        [CallerMemberName] string _caller = ""
     ) {
+        if (CanUpdate() is { } whyNot) {
+            GD.Print($"[{_caller}] cannot {nameof(UpdateSizeInPixels)} because: {whyNot}");
+            return;
+        }
+
         if (!size.IsFinite()) {
             GD.Print(
-                $"{nameof(size)} of {size} isn't finite, which implies that the scene isn't ready for prime time yet. Skipping {nameof(UpdateSizeInPixels)}."
+                $"[{_caller}] {nameof(size)} of {size} isn't finite, which implies that the scene isn't ready for prime time yet. Skipping {nameof(UpdateSizeInPixels)}."
             );
         }
 
         if (Rect is not { } rect) {
-            GD.Print($"{nameof(Rect)} was null; unable to update {nameof(SizeInPixels)}");
             return;
         }
 
@@ -230,11 +295,11 @@ public partial class RectMarker : Node2D {
     }
 
 
-    private Vector2 GetParentSize() {
+    private Vector2? GetParentSize() {
         return GetParent() switch {
             Control control       => control.Size,
             RectMarker rectMarker => rectMarker.SizeInPixels,
-            _                     => new Vector2(float.NaN, float.NaN)
+            _                     => null
         };
     }
 
