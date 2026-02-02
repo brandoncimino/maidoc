@@ -1,0 +1,48 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1krw2vnc6tjd"]
+
+[ext_resource type="Script" uid="uid://dgv7we282ro8a" path="res://Scenes/GameComponents/PlaymatSceneRoot.cs" id="1_35l38"]
+[ext_resource type="PackedScene" uid="uid://dy37p3hhukbba" path="res://Scenes/RectMarker.tscn" id="2_1q82q"]
+
+[node name="Playmat" type="Node2D"]
+editor_description = "Provides references for laying out a player's board cells, deck, graveyard, etc."
+script = ExtResource("1_35l38")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="Screen" parent="." instance=ExtResource("2_1q82q")]
+visible = false
+SizeInPixels = Vector2(1280, 720)
+OffsetInPixels = Vector2(0, 0)
+
+[node name="ReferenceRect" parent="Screen" index="0"]
+offset_left = -640.0
+offset_top = -360.0
+offset_right = 640.0
+offset_bottom = 360.0
+border_width = 3.0
+
+[node name="RichTextLabel" parent="Screen/ReferenceRect" index="0"]
+text = "Screen
+🌍 12.8 ⨉ 7.2 m"
+
+[node name="Board" parent="." instance=ExtResource("2_1q82q")]
+SizeInPixels = Vector2(200, 100)
+OffsetInPixels = Vector2(0, 50.000004)
+
+[node name="Deck" parent="Board" instance=ExtResource("2_1q82q")]
+position = Vector2(-465, 141)
+SizeInPixels = Vector2(100, 100.00001)
+OffsetInPixels = Vector2(0, 0)
+
+[node name="Graveyard" parent="Board" instance=ExtResource("2_1q82q")]
+position = Vector2(465, 141)
+SizeInPixels = Vector2(100, 100.00001)
+OffsetInPixels = Vector2(0, 0)
+metadata/_edit_pinned_properties_ = [&"position"]
+
+[node name="Hand" parent="." instance=ExtResource("2_1q82q")]
+position = Vector2(2, 360)
+SizeInPixels = Vector2(100, 100.00001)
+OffsetInPixels = Vector2(0, 0)
+
+[editable path="Screen"]
