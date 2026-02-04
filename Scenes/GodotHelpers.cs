@@ -17,7 +17,19 @@ public static partial class GodotHelpers {
     /// <summary>
     /// Based on Godot's default <see cref="Area2D.Gravity"/>, which is <c>980</c>, compared to the IRL value of 9.8 meters/second².
     /// </summary>
-    public const float GodotUnitsPerMeter = 100;
+    public const float GodotPixelsPerMeter = 100;
+
+    [Obsolete($"Use {nameof(GodotPixelsPerMeter)} instead.")]
+    public const float GodotUnitsPerMeter = GodotPixelsPerMeter;
+
+    public static float GodotPixelsToMeters(this float godotPixels) => godotPixels / GodotPixelsPerMeter;
+    public static float MetersToGodotPixels(this float meters)      => meters      * GodotPixelsPerMeter;
+
+    public static Vector2 GodotPixelsToMeters(this Vector2 godotPixels) => godotPixels / GodotPixelsPerMeter;
+    public static Vector2 MetersToGodotPixels(this Vector2 meters)      => meters      * GodotPixelsPerMeter;
+
+    public static Rect2 GodotPixelsToMeters(this Rect2 godotPixels) => godotPixels.Scale(1 / GodotPixelsPerMeter);
+    public static Rect2 MetersToGodotPixels(this Rect2 meters)      => meters.Scale(GodotPixelsPerMeter);
 
     public static Action<string> Printer { private get; set; } = Godot.GD.Print;
 
@@ -540,7 +552,7 @@ public static partial class GodotHelpers {
         Rect2   desiredRectInMeters
     ) {
         GD.Print($"{nameof(AdjustSizeAndPosition)} of {control} to {desiredRectInMeters} meters");
-        var desiredRectInGodotUnits = desiredRectInMeters.Resize(GodotUnitsPerMeter);
+        var desiredRectInGodotUnits = desiredRectInMeters.ResizeFromCenter(GodotUnitsPerMeter);
 
         if (control is RichTextLabel) {
             control.Position = desiredRectInGodotUnits.GetCenter();
@@ -554,6 +566,13 @@ public static partial class GodotHelpers {
         control.CustomMinimumSize = desiredRectInGodotUnits.Size;
 
         return default;
+    }
+
+    public static T AdjustSizeAndPosition<T>(
+        this T       object2D,
+        RectDistance desiredRect
+    ) where T : CanvasItem {
+        return object2D.AdjustSizeAndPosition(desiredRect.Meters);
     }
 
     public static T AdjustSizeAndPosition<T>(

@@ -22,6 +22,22 @@ public static partial class GodotHelpers {
         return node;
     }
 
+    public static T AtPosition<T>(
+        this T     gameNode2D,
+        Distance2D position
+    ) where T : IGameNode2D {
+        gameNode2D.LocalPosition = position;
+        return gameNode2D;
+    }
+
+    public static T AtPosition<T>(
+        this T  node,
+        Vector2 position
+    ) where T : Node2D {
+        node.Position = position;
+        return node;
+    }
+
     public static T AsChildOf<T>(
         this T            self,
         Node              parent,

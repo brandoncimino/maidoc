@@ -21,7 +21,6 @@ public sealed class GodotBetween {
 
     public required Referee              Referee              { get; init; }
     public required GodotPlayerInterface GodotPlayerInterface { get; init; }
-    public required SceneFactory         SceneFactory         { get; init; }
 
     public void DrawFromDeck(PlayerId playerId) {
         _eventQueue.AddRange(Referee.DrawFromDeck(playerId));

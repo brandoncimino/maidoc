@@ -112,4 +112,8 @@ public static partial class GodotHelpers {
     };
 
     public static FocusWrapper FocusWrapper(this Control control) => new(control);
+
+    public static bool IsFocused(this Control control) {
+        return control.GetViewport()?.GuiGetFocusOwner() == control;
+    }
 }
