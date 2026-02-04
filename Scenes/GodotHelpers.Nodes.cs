@@ -32,7 +32,7 @@ public partial class GodotHelpers {
                    .Single();
     }
 
-    public static IEnumerable<Node> GetSiblings(this Node self, bool includeInternal = false) {
+    public static IEnumerable<Node> EnumerateSiblings(this Node self, bool includeInternal = false) {
         return self.GetParent()?.EnumerateChildren(depth: 1, includeInternal: includeInternal) ?? [];
     }
 
