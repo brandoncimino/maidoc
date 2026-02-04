@@ -8,11 +8,14 @@ using Godot.Collections;
 
 namespace maidoc.Scenes;
 
+[Obsolete(
+    $"Use {nameof(RectDistance)} with {nameof(CanvasItem.DrawRect)} instead. Doing this kind of thing in the editor...isn't worth it."
+)]
 [Tool]
 public partial class RectMarker : Node2D {
     private readonly float _screenWidth = ProjectSettings.GetSetting("display/window/size/viewport_width").AsSingle();
     private readonly float _screenHeight = ProjectSettings.GetSetting("display/window/size/viewport_height").AsSingle();
-    private          ReferenceRect? Rect => GetChild<ReferenceRect>(0);
+    private          ReferenceRect? Rect => IsInsideTree() ? GetChild<ReferenceRect>(0) : null;
 
     private RichTextLabel? Label =>
         Rect?.GetChild<RichTextLabel>(0); //GetNode<RichTextLabel>("ReferenceRect/RichTextLabel");
@@ -23,6 +26,14 @@ public partial class RectMarker : Node2D {
     private const string Meters  = "suffix:m";
     private const string Pixels  = "suffix:px";
     private const string Screens = "suffix:screens";
+
+    #region Canon fields
+
+    private Vector2 _sizeInPixels;
+    private Vector2 _offsetInPixels;
+    // 📎 `_sizeInPixels` isn't necessary, because it's just an "alias" for the existing `CanvasItem.position`.
+
+    #endregion
 
     #region Rect2
 
@@ -53,57 +64,51 @@ public partial class RectMarker : Node2D {
     }
 
     /// <inheritdoc cref="ReferenceAxis"/>
-    [Export]
+
     public ReferenceAxis ScreenRatioAxis { get; set; }
 
     /// <inheritdoc cref="ReferenceAxis"/>
-    [Export]
+
     public ReferenceAxis SelfRatioAxis { get; set; }
 
 
-    [Export]
     private Color BorderColor { get => Rect?.BorderColor ?? default; set => Rect?.SetBorderColor(value); }
 
-    [Export]
+
     private Color FillColor { get => Label?.SelfModulate ?? default; set => Label?.SetSelfModulate(value); }
 
 
-    [Export(hintString: Pixels)]
     private float BorderWidth { get => Rect?.BorderWidth ?? default; set => Rect?.SetBorderWidth(value); }
 
-    [Export]
+
     public bool EditorOnly { get => Rect?.EditorOnly ?? default; set => Rect?.SetEditorOnly(value); }
 
-    [Export]
+
     public bool Fill { get => Label?.Visible ?? default; set => Label?.SetVisible(value); }
 
     #region Size
 
+    public Vector2 SizeInPixels {
+        get => _sizeInPixels;
+        set {
+            _sizeInPixels = value;
+            Refresh();
+        }
+    }
+
     /// <summary>
     /// Based on <see cref="GodotHelpers.GodotUnitsPerMeter"/>
     /// </summary>
-    [Export(hintString: Meters)]
-    [ExportGroup(SizeGroup, SizePrefix)]
     public Vector2 SizeInMeters {
         get => SizeInPixels / GodotHelpers.GodotUnitsPerMeter;
         set => SizeInPixels = value * GodotHelpers.GodotUnitsPerMeter;
     }
 
-
-    [Export(hintString: "suffix:px")]
-    [ExportGroup(SizeGroup, SizePrefix)]
-    public Vector2 SizeInPixels { get => Rect?.Size ?? default; set => UpdateSizeInPixels(value, OffsetInPixels); }
-
-
-    [Export(hintString: "suffix:screens")]
-    [ExportGroup(SizeGroup, SizePrefix)]
     public Vector2 SizeInScreens {
         get => Ratio2D.CalculateRatio(SizeInPixels, GetScreenSize(), ScreenRatioAxis);
         set => SizeInPixels = Ratio2D.CalculateActual(value, GetScreenSize(), ScreenRatioAxis);
     }
 
-    [Export(hintString: "suffix:parents")]
-    [ExportGroup(SizeGroup, SizePrefix)]
     public Vector2 SizeInParents {
         get =>
             GetParentSize() switch {
@@ -125,23 +130,21 @@ public partial class RectMarker : Node2D {
     private const string PositionGroup  = "Position";
     private const string PositionPrefix = "PositionIn";
 
+
+    public Vector2 PositionInPixels { get => Position; set => Position = value; }
+
     /// <summary>
     /// Based on <see cref="GodotHelpers.GodotUnitsPerMeter"/>
     /// </summary>
-    [Export(hintString: Meters)]
-    [ExportGroup(PositionGroup, PositionPrefix)]
-    // [ExportCategory("Junk")]
+
+
+    // 
     public Vector2 PositionInMeters {
         get => PositionInPixels / GodotHelpers.GodotUnitsPerMeter;
         set => PositionInPixels = value * GodotHelpers.GodotUnitsPerMeter;
     }
 
-    [Export(hintString: Pixels)]
-    [ExportGroup(PositionGroup, PositionPrefix)]
-    public Vector2 PositionInPixels { get => Position; set => Position = value; }
 
-    [Export(hintString: Screens)]
-    [ExportGroup(PositionGroup, PositionPrefix)]
     public Vector2 PositionInScreens {
         get => Ratio2D.CalculateRatio(PositionInPixels, GetScreenSize(), ScreenRatioAxis);
         set => PositionInPixels = Ratio2D.CalculateActual(value, GetScreenSize(), ScreenRatioAxis);
@@ -152,75 +155,74 @@ public partial class RectMarker : Node2D {
     private const string OffsetGroup  = "Offset";
     private const string OffsetPrefix = "OffsetIn";
 
-    private Vector2 _offsetInPixels;
-
-    [Export(hintString: Pixels)]
-    [ExportGroup(PositionGroup)]
-    [ExportSubgroup(OffsetGroup, OffsetPrefix)]
+    // [Export(hintString: Pixels)]
+    // [ExportGroup(PositionGroup)]
+    // [ExportSubgroup(OffsetGroup, OffsetPrefix)]
     public Vector2 OffsetInPixels {
         get => _offsetInPixels;
         set {
             _offsetInPixels = value;
-            UpdateSizeInPixels(SizeInPixels, value);
+            Refresh();
+            // UpdateSizeInPixels(SizeInPixels, value);
         }
     }
 
-    [Export(hintString: Meters)]
-    [ExportGroup(PositionGroup)]
-    [ExportSubgroup(OffsetGroup, OffsetPrefix)]
+
     public Vector2 OffsetInMeters {
         get => OffsetInPixels / GodotHelpers.GodotUnitsPerMeter;
         set => OffsetInPixels = value / GodotHelpers.GodotUnitsPerMeter;
     }
 
-    [Export(hintString: Screens)]
-    [ExportGroup(PositionGroup)]
-    [ExportSubgroup(OffsetGroup, OffsetPrefix)]
+
     public Vector2 OffsetInScreens {
         get => Ratio2D.CalculateRatio(OffsetInPixels, GetScreenSize(), ScreenRatioAxis);
         set => OffsetInPixels = Ratio2D.CalculateActual(value, GetScreenSize(), ScreenRatioAxis);
     }
 
-    [Export(hintString: "suffix:selves")]
-    [ExportGroup(PositionGroup)]
-    [ExportSubgroup(OffsetGroup, OffsetPrefix)]
+
     public Vector2 OffsetInSelves {
         get => Ratio2D.CalculateRatio(OffsetInPixels, SizeInPixels, SelfRatioAxis);
         set => OffsetInPixels = Ratio2D.CalculateActual(value, SizeInPixels, SelfRatioAxis);
     }
 
+    private IEnumerable<GodotProperty> SizeProperties() {
+        yield return GodotProperty.Header(SizeGroup);
+        yield return SizeInPixels.CreateGodotProperty(Pixels, usage: PropertyUsageFlags.Default);
+        yield return SizeInMeters.CreateGodotProperty(Meters);
+        yield return SizeInScreens.CreateGodotProperty(Screens);
+
+
+        var sizeInParents = SizeInParents.CreateGodotProperty("suffix:parents");
+        if (GetParentSize() is not null) {
+            yield return sizeInParents;
+        }
+        else {
+            yield return sizeInParents with {
+                Usage = sizeInParents.Usage | PropertyUsageFlags.ReadOnly
+            };
+        }
+    }
+
     public override Array<Dictionary> _GetPropertyList() {
         IEnumerable<GodotProperty> properties = [
-            GodotProperty.Header(SizeGroup),
-            SizeInPixels.CreateGodotProperty(),
-            SizeInMeters.CreateGodotProperty(),
-            SizeInScreens.CreateGodotProperty(),
-            SizeInParents.CreateGodotProperty(),
+            ..SizeProperties(),
 
             GodotProperty.Header(PositionGroup),
-            PositionInPixels.CreateGodotProperty(),
-            PositionInMeters.CreateGodotProperty(),
-            PositionInScreens.CreateGodotProperty(),
+            PositionInPixels.CreateGodotProperty(Pixels),
+            PositionInMeters.CreateGodotProperty(Meters),
+            PositionInScreens.CreateGodotProperty(Screens),
 
             GodotProperty.Header(OffsetGroup, GodotProperty.HeaderType.Subgroup),
-            OffsetInPixels.CreateGodotProperty(),
-            OffsetInMeters.CreateGodotProperty(),
-            OffsetInScreens.CreateGodotProperty(),
-            OffsetInSelves.CreateGodotProperty()
+            OffsetInPixels.CreateGodotProperty(Pixels, usage: PropertyUsageFlags.Default),
+            OffsetInMeters.CreateGodotProperty(Meters),
+            OffsetInScreens.CreateGodotProperty(Screens),
+            OffsetInSelves.CreateGodotProperty("suffix:selves")
         ];
 
         return [
             ..properties.Select(it => it.ToGodotDictionary())
         ];
     }
-
-    public Vector2 BonusProperty { get; set; }
-
-    // public override Variant _Get(StringName property) {
-    //     if (property == PropertyName.SizeInMeters) {
-    //
-    //     }
-    // }
 
     #endregion
 
@@ -251,49 +253,23 @@ public partial class RectMarker : Node2D {
     //     };
     // }
 
-    private string? CanUpdate() {
-        if (!IsInsideTree()) {
-            return $"{nameof(IsInsideTree)} is false.";
-        }
-
-        return null;
-    }
-
-    private void UpdateSizeInPixels(
-        Vector2                   size,
-        Vector2                   offset,
-        [CallerMemberName] string _caller = ""
-    ) {
-        if (CanUpdate() is { } whyNot) {
-            GD.Print($"[{_caller}] cannot {nameof(UpdateSizeInPixels)} because: {whyNot}");
-            return;
-        }
-
-        if (!size.IsFinite()) {
-            GD.Print(
-                $"[{_caller}] {nameof(size)} of {size} isn't finite, which implies that the scene isn't ready for prime time yet. Skipping {nameof(UpdateSizeInPixels)}."
-            );
-        }
-
-        if (Rect is not { } rect) {
+    private void Refresh() {
+        if (Rect is null) {
             return;
         }
 
         var targetRect = GodotHelpers.Rect2ByCenter(
-            offset,
-            size
+            _offsetInPixels,
+            _sizeInPixels
         );
 
-        rect.Position = targetRect.Position;
-        rect.Size     = targetRect.Size;
-
-        RefreshText();
+        Rect!.Position = targetRect.Position;
+        Rect!.Size     = targetRect.Size;
     }
 
     private Vector2 GetScreenSize() {
         return new Vector2(_screenWidth, _screenHeight);
     }
-
 
     private Vector2? GetParentSize() {
         return GetParent() switch {
@@ -322,6 +298,10 @@ public partial class RectMarker : Node2D {
         if (what == NotificationPathRenamed) {
             RefreshText();
         }
+    }
+
+    public override void _EnterTree() {
+        Refresh();
     }
 }
 

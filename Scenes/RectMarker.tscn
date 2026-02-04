@@ -6,13 +6,6 @@
 
 [node name="RectMarker" type="Marker2D"]
 script = ExtResource("1_eodak")
-BorderColor = Color(2.7915835e-06, 0.5991945, 0.6988358, 1)
-FillColor = Color(1, 1, 1, 0.39607844)
-BorderWidth = 1.0
-Fill = true
-SizeInMeters = Vector2(1, 1.0000001)
-SizeInPixels = Vector2(100, 100.00001)
-SizeInScreens = Vector2(0.078125, 0.1388889)
 
 [node name="ReferenceRect" type="ReferenceRect" parent="."]
 offset_left = -50.0
