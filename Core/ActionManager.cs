@@ -18,6 +18,10 @@ public sealed class ActionManager {
         GD.Print($"TODO: click {cellAddress}");
     }
 
+    public void ClickZone(ZoneAddress zoneAddress) {
+        GD.Print($"TODO: click {zoneAddress}");
+    }
+
     public StepResult<ValueTuple> TrySelect(ISelectable selection) {
         GD.Print($"Attempting to select: {selection}");
 
@@ -27,7 +31,7 @@ public sealed class ActionManager {
 
         if (selection is IActionStarter actionStarter) {
             return actionStarter.TryStart(Referee)
-                .Then(started => CurrentAction = started);
+                                .Then(started => CurrentAction = started);
         }
 
         return new($"Nothing to be done with {selection}.");
