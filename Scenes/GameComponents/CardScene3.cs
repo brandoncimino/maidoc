@@ -25,17 +25,12 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
 
     Tween? ICardSceneRoot.CurrentPositionTween { get; set; }
 
-    public const    float   StandardWidthInMeters = CardAspectRatio.Standard;
-    public readonly Vector2 UnscaledSizeInMeters  = new(StandardWidthInMeters, 1);
+    public const float      StandardWidthInMeters = CardAspectRatio.Standard;
+    public       Distance2D UnscaledSize { get; } = new Vector2(StandardWidthInMeters, 1).Meters();
 
     public ICardData CardData { get; set; } = CreatureData.JunkRhino;
 
-    public Vector2 SizeInMeters { get => Scale * UnscaledSizeInMeters; set => Scale = value / UnscaledSizeInMeters; }
-
-    public Vector2 PositionInMeters {
-        get => Position / GodotHelpers.GodotUnitsPerMeter;
-        set => Position = value * GodotHelpers.GodotUnitsPerMeter;
-    }
+    public Vector2 SizeInMeters { get => Scale * UnscaledSize.Meters; set => Scale = value / UnscaledSize.Meters; }
 
     public Tween? CurrentPositionTween { get; set; }
 
@@ -53,7 +48,7 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
 
     private void NormalizeSizes() {
         _faceContainer.Get(this)
-                      .AdjustSizeAndPosition(new Rect2(Vector2.Zero, UnscaledSizeInMeters));
+                      .AdjustSizeAndPosition(new Rect2(Vector2.Zero, UnscaledSize.Meters));
     }
 
     [ExportToolButton(nameof(RefreshFace))]
@@ -83,8 +78,7 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
     private HandView? MyHand => this.EnumerateAncestors().OfType<HandView>().FirstOrDefault();
 
     private bool IsInHand([MaybeNullWhen(false)] out HandView hand) {
-        hand = this.EnumerateAncestors().OfType<HandView>().FirstOrDefault();
-        return hand != null;
+        return (hand = MyHand) is not null;
     }
 
     private bool _focusedByMouse;

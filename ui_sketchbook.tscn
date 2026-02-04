@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://c5rothuty60rn"]
+[gd_scene load_steps=8 format=3 uid="uid://c5rothuty60rn"]
 
 [ext_resource type="Script" uid="uid://c4sjml8rcj1l1" path="res://Scenes/GameComponents/TextTools.cs" id="1_2dfqk"]
 [ext_resource type="Script" uid="uid://difx3h1uml76f" path="res://Scenes/GameComponents/RichTextTools.cs" id="2_wmjlu"]
 [ext_resource type="Texture2D" uid="uid://dyd8lwo0ciulk" path="res://Sprites/box_64x64.png" id="3_ef8lo"]
+[ext_resource type="PackedScene" uid="uid://b1krw2vnc6tjd" path="res://Scenes/GameComponents/Playmat.tscn" id="4_ac17t"]
+[ext_resource type="PackedScene" uid="uid://dy37p3hhukbba" path="res://Scenes/RectMarker.tscn" id="5_fnx7f"]
 
 [sub_resource type="SystemFont" id="SystemFont_2dfqk"]
 
@@ -101,6 +103,8 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 200.0
+offset_right = 200.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_wmjlu")
@@ -114,3 +118,9 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("3_ef8lo")
 expand_mode = 1
+
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="Playmat" parent="Node2D" instance=ExtResource("4_ac17t")]
+
+[node name="RectMarker" parent="Node2D" instance=ExtResource("5_fnx7f")]

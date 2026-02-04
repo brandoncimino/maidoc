@@ -4,22 +4,26 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Godot;
+using maidoc.Core;
 
 namespace maidoc.Scenes.GameComponents;
 
 [Tool]
 public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput>, IHandSceneRoot {
+    private readonly Disenfranchised<PlayerId> _playerId = new();
+
     [Export]
     private GodotHelpers.BoundaryNavigation _boundaryNavigation;
 
-    private readonly LazyChild<ReferenceRect> _referenceRect = new();
+    public Node2D AsNode2D => this;
 
     /// <summary>
     /// The node that my <see cref="ICardSceneRoot"/>s should be immediate children of.
     /// </summary>
     private Node CardParent => this;
 
-    public Vector2 AvailableSpaceInMeters => _referenceRect.Get(this).Size / GodotHelpers.GodotUnitsPerMeter;
+    private readonly Disenfranchised<Distance2D> _unscaledSize = new();
+    public           Distance2D                  UnscaledSize => _unscaledSize.Value;
 
     public bool FaceDown { get; set; } = true;
 
@@ -54,10 +58,15 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
     }
 
     public HandView InitializeSelf(SpawnInput input) {
+        _playerId.Enfranchise(input.PlayerId);
+        _unscaledSize.Enfranchise(input.UnscaledSize);
         return this;
     }
 
-    public readonly record struct SpawnInput;
+    public readonly record struct SpawnInput {
+        public required PlayerId   PlayerId     { get; init; }
+        public required Distance2D UnscaledSize { get; init; }
+    }
 
     /// <summary>
     /// TODO: Using Godot's scene structure to track the cards has tradeoffs:
@@ -81,26 +90,22 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
             return;
         }
 
-
         var cardSizeInMeters = handCards.First().SizeInMeters;
-        GD.Print(
-            $"Organizing {handCards.Length} cards of size {cardSizeInMeters} into {AvailableSpaceInMeters} meters"
-        );
 
         var (start, interval) = CalculateLayoutFromCenter(
-            AvailableSpaceInMeters.X,
+            _unscaledSize.Value.X.Meters,
             cardSizeInMeters.X,
             handCards.Length
         );
 
-        var excessCardHeight = cardSizeInMeters.Y / 2 - AvailableSpaceInMeters.Y;
+        var excessCardHeight = cardSizeInMeters.Y / 2 - _unscaledSize.Value.Y.Meters;
         var yTucked          = excessCardHeight;
         var yFocused         = -cardSizeInMeters.Y / 2;
 
         this.blog(
             cardSizeInMeters.Y,
             cardSizeInMeters.Y / 2,
-            AvailableSpaceInMeters.Y,
+            _unscaledSize.Value.Y,
             excessCardHeight,
             yTucked,
             yFocused
@@ -162,6 +167,11 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
             RequestReorganizing();
         }
     }
+
+    public ZoneAddress ZoneAddress => new() {
+        PlayerId = _playerId.Value,
+        ZoneId   = DuelDiskZoneId.Hand
+    };
 
     public void AddCard(ICardSceneRoot card) {
         card.AsNode2D.AsChildOf(CardParent);

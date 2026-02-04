@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using Godot;
 using maidoc.Core;
 using maidoc.Core.Cards;
@@ -14,10 +13,7 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
     private          PaperPusher                  _paperPusher => _spawnInput.Value.PaperPusher;
     private readonly Disenfranchised<CanvasLayer> _uiRoot = new();
 
-    private readonly Disenfranchised<PlayerMap<BoardView>>          _playerBoards = new();
-    private readonly Disenfranchised<PlayerMap<Deck>>               _decks        = new();
-    private readonly Disenfranchised<PlayerMap<GraveyardSceneRoot>> _graveyards   = new();
-    private readonly Disenfranchised<PlayerMap<HandView>>           _hands        = new();
+    private readonly Disenfranchised<PlayerMap<PlaymatSceneRoot>> _playmats = new();
 
     private static PackedScene? _packedScene;
 
@@ -32,38 +28,35 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
         _spawnInput.Enfranchise(input);
         _uiRoot.Enfranchise(() => input.GodotPlayerInterface);
 
-        SpawnBoards(input.LaneCount, input.OnCellClick);
-        GetHands();
+        _playmats.Enfranchise(() =>
+            PlayerMap.Create(playerId => {
+                    var playmatSpawnInput = new PlaymatSceneRoot.SpawnInput() {
+                        PlayerId    = playerId,
+                        LaneCount   = input.LaneCount,
+                        OnCellClick = input.OnCellClick,
+                        OnZoneClick = input.OnZoneClick
+                    };
 
-        return this;
-    }
+                    var playmat = this.SpawnChild<PlaymatSceneRoot, PlaymatSceneRoot.SpawnInput>(playmatSpawnInput)
+                                      .Named($"{playerId} Playmat");
 
-    private HandView RequireHand(PlayerId playerId) {
-        return _uiRoot.Value
-                      .EnumerateChildren()
-                      .OfType<HandView>()
-                      .Single(it => it.Name == $"{playerId} Hand");
-    }
+                    if (playerId is PlayerId.Blue) {
+                        playmat.RotationDegrees = 180;
+                    }
 
-    private void GetHands() {
-        _hands.Enfranchise(() => PlayerMap.Create(RequireHand)
-        );
-    }
+                    return playmat;
 
-    private void SpawnBoards(int laneCount, Action<CellAddress> onCellClick) {
-        _playerBoards.Enfranchise(() =>
-            PlayerMap.Create(id => this.SpawnChild<BoardView, BoardView.SpawnInput>(
-                                           new BoardView.SpawnInput() {
-                                               PlayerId    = id,
-                                               LaneCount   = laneCount,
-                                               OnCellClick = onCellClick
-                                           }
-                                       )
-                                       .Named($"{id} Board")
+                    // return this.EnumerateSiblings()
+                    // .OfType<PlaymatSceneRoot>()
+                    // .Single(it => it.Name == playerId.ToString())
+                    // .InitializeSelf(
+                    // playmatSpawnInput
+                    // );
+                }
             )
         );
 
-        _playerBoards.Value[PlayerId.Blue].RotationDegrees = 180;
+        return this;
     }
 
     public override void _Process(double delta) {
@@ -99,19 +92,11 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
 
         public required int                 LaneCount   { get; init; }
         public required Action<CellAddress> OnCellClick { get; init; }
+        public required Action<ZoneAddress> OnZoneClick { get; init; }
     }
 
-    private Node GetZoneNode(ZoneAddress zoneAddress) {
-        if (zoneAddress.ZoneId == DuelDiskZoneId.Hand) {
-            return _hands.Value[zoneAddress.PlayerId];
-        }
-
-        return zoneAddress.ZoneId switch {
-            DuelDiskZoneId.Deck      => _decks.Value[zoneAddress.PlayerId],
-            DuelDiskZoneId.Hand      => _hands.Value[zoneAddress.PlayerId],
-            DuelDiskZoneId.Graveyard => _graveyards.Value[zoneAddress.PlayerId],
-            _                        => throw new ArgumentOutOfRangeException(nameof(zoneAddress), zoneAddress, null)
-        };
+    private ICardZoneNode GetZoneNode(ZoneAddress zoneAddress) {
+        return _playmats.Value[zoneAddress.PlayerId].GetZoneNode(zoneAddress.ZoneId);
     }
 
     #region Event Consumption
@@ -129,7 +114,8 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
         GD.Print($"Consuming: {cardMovedEvent}");
 
         var cardObject = GetOrSpawnCard(cardMovedEvent.Card.SerialNumber);
-        cardObject.blog();
+        var originNode = GetZoneNode(cardMovedEvent.From);
+        cardObject.LocalPosition = originNode.LocalPosition;
 
         var destinationNode = GetZoneNode(cardMovedEvent.To);
 
@@ -137,7 +123,9 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
             handSceneRoot.AddCard(cardObject);
         }
         else {
-            GD.PrintErr($"Unhandled {nameof(destinationNode)} for {cardMovedEvent.To}: {destinationNode.Describe()}");
+            GD.PrintErr(
+                $"Unhandled {nameof(destinationNode)} for {cardMovedEvent.To}: {destinationNode.AsNode2D.Describe()}"
+            );
         }
 
         return true;
@@ -172,6 +160,7 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
         //       (and the example code on https://docs.godotengine.org/en/stable/tutorials/ui/gui_navigation.html#necessary-code doesn't even compile)
         //       so I'm not bothering with it for the time being.
         // Callable.From(_handContainers.Value[playerId].FindNextValidFocus().GrabFocus).CallDeferred();
-        _hands.Value[playerId].FocusOnFirstCard();
+        // _hands.Value[playerId].FocusOnFirstCard();
+        _playmats.Value[playerId].Hand.FocusOnFirstCard();
     }
 }

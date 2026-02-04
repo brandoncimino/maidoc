@@ -7,10 +7,7 @@ namespace maidoc.Scenes;
 [Tool]
 public partial class GameSprite : Sprite2D {
     [Export]
-    public bool MaintainAspectRatio {
-        get;
-        set;
-    } = true;
+    public bool MaintainAspectRatio { get; set; } = true;
 
     public override void _Ready() {
         Centered = true;
@@ -18,13 +15,11 @@ public partial class GameSprite : Sprite2D {
         this.NormalizeSize(MaintainAspectRatio);
 
         if (MaintainAspectRatio) {
-            this.GetSiblings()
+            this.EnumerateSiblings()
                 .OfType<CollisionShape2D>()
-                .ForEach(shape => {
-                    shape.Scale = Texture.GetSize().NormalizeLargerAxis();
-                });
+                .ForEach(shape => { shape.Scale = Texture.GetSize().NormalizeLargerAxis(); });
 
-            this.GetSiblings()
+            this.EnumerateSiblings()
                 .OfType<Control>()
                 .ForEach(secretRectangle => {
                         secretRectangle.Size =

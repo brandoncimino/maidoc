@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cp01x8bm0rpa6"]
+[gd_scene load_steps=3 format=3 uid="uid://cp01x8bm0rpa6"]
 
 [ext_resource type="Script" uid="uid://cuak3yx4l3p5y" path="res://Main.cs" id="1_glv2v"]
 [ext_resource type="PackedScene" uid="uid://c4dgkn487ooal" path="res://Scenes/UI/godot_player_interface.tscn" id="2_uu6xs"]
-[ext_resource type="PackedScene" uid="uid://eylv1o6xsjvj" path="res://Scenes/GameComponents/Hand.tscn" id="3_r0du0"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_glv2v")
@@ -10,10 +9,3 @@ script = ExtResource("1_glv2v")
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="PlayerInterface" parent="." instance=ExtResource("2_uu6xs")]
-
-[node name="Red Hand" parent="PlayerInterface" instance=ExtResource("3_r0du0")]
-position = Vector2(640, 720)
-
-[node name="Blue Hand" parent="PlayerInterface" instance=ExtResource("3_r0du0")]
-position = Vector2(640, 0)
-rotation = 3.1415927

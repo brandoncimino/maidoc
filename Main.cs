@@ -11,11 +11,6 @@ public partial class Main : Node {
     [Export]
     public bool DebugMenuEnabled { get; set; } = true;
 
-    private readonly LazyChild<SceneFactory> _sceneFactory = new(parent => new SceneFactory()
-                                                                           .Named(nameof(SceneFactory))
-                                                                           .AsChildOf(parent)
-    );
-
     private readonly LazyChild<GodotPlayerInterface> _godotPlayerInterface = new();
 
     private DuelRunner? _duelRunner;
@@ -51,7 +46,6 @@ public partial class Main : Node {
         var godotBetween = new GodotBetween() {
             Referee              = referee,
             GodotPlayerInterface = _godotPlayerInterface.Get(this),
-            SceneFactory         = _sceneFactory.Get(this)
         };
 
         var duelRunnerInput = new DuelRunner.SpawnInput() {
@@ -59,10 +53,11 @@ public partial class Main : Node {
             GodotBetween         = godotBetween,
             GodotPlayerInterface = _godotPlayerInterface.Get(this),
             LaneCount            = 4,
-            OnCellClick          = playerInterface.ClickCell
+            OnCellClick          = playerInterface.ClickCell,
+            OnZoneClick          = playerInterface.ClickZone
         };
 
-        _duelRunner = _sceneFactory.Get(this).SpawnDuelRunner(duelRunnerInput);
+        _duelRunner = this.SpawnChild<DuelRunner, DuelRunner.SpawnInput>(duelRunnerInput);
 
         if (DebugMenuEnabled) {
             _godotPlayerInterface.Get(this).SpawnChild<DebugMenu, DebugMenu.SpawnInput>(
