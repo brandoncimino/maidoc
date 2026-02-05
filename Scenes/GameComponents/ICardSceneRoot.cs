@@ -14,16 +14,18 @@ public interface ICardSceneRoot : IFocusDelegated<ICardSceneRoot>, IGameNode2D {
     protected Tween CreateTween();
 
     public void AnimatePosition(
-        Vector2        destinationInMeters,
+        Distance2D     destination,
         double         durationInSeconds = .1,
         Action<Tween>? moreTweening      = null
     ) {
+        GD.Print($"Animating {this} from {LocalPosition} → {destination}");
+
         CurrentPositionTween?.Kill();
         CurrentPositionTween = CreateTween();
         CurrentPositionTween.TweenMethod(
-                                Callable.From<Vector2>(pos => LocalPosition = pos.Meters()),
+                                Callable.From<Vector2>(posInMeters => LocalPosition = posInMeters.Meters()),
                                 LocalPosition.Meters,
-                                destinationInMeters,
+                                destination.Meters,
                                 durationInSeconds
                             )
                             .SetTrans(Tween.TransitionType.Cubic)

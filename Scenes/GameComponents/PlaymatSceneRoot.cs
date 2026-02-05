@@ -147,7 +147,7 @@ public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, Pla
                     PlayerId     = spawnInput.PlayerId,
                     UnscaledSize = handRect.Size
                 }
-            ).AdjustSizeAndPosition(handRect.Meters)
+            ).AtPosition(handRect.Position)
         );
     }
 

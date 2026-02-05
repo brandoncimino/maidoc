@@ -118,7 +118,7 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
                 new Vector2(
                     start + (interval * i),
                     card.IsFocused ? yFocused : yTucked
-                )
+                ).Meters()
             );
 
             var neighbors = i.GetNeighbors(handCards.Length, _boundaryNavigation);

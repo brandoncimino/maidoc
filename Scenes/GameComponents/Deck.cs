@@ -57,7 +57,7 @@ public partial class Deck : Node2D, ISceneRoot<Deck, Deck.SpawnInput>, ICardZone
         _cardHolder.Value.AddChild(card.AsNode2D);
 
         card.AnimatePosition(
-            this.PositionInMeters(),
+            ((IGameNode2D)this).LocalPosition,
             .2,
             tween => {
                 GD.Print($"I ({card}) made it to the deck; disappearing.");
