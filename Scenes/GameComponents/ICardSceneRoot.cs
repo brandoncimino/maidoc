@@ -7,8 +7,6 @@ namespace maidoc.Scenes.GameComponents;
 public interface ICardSceneRoot : IFocusDelegated<ICardSceneRoot>, IGameNode2D {
     public bool FaceDown { get; set; }
 
-    public Vector2 SizeInMeters { get; set; }
-
     protected Tween? CurrentPositionTween { get; set; }
 
     protected Tween CreateTween();
@@ -18,13 +16,13 @@ public interface ICardSceneRoot : IFocusDelegated<ICardSceneRoot>, IGameNode2D {
         double         durationInSeconds = .1,
         Action<Tween>? moreTweening      = null
     ) {
-        GD.Print($"Animating {this} from {LocalPosition} → {destination}");
+        GD.Print($"Animating {this} from {this.LocalPosition} → {destination}");
 
         CurrentPositionTween?.Kill();
         CurrentPositionTween = CreateTween();
         CurrentPositionTween.TweenMethod(
-                                Callable.From<Vector2>(posInMeters => LocalPosition = posInMeters.Meters()),
-                                LocalPosition.Meters,
+                                Callable.From<Vector2>(posInMeters => this.LocalPosition = posInMeters.Meters),
+                                this.LocalPosition.Meters,
                                 destination.Meters,
                                 durationInSeconds
                             )

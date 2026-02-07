@@ -26,7 +26,7 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
     Tween? ICardSceneRoot.CurrentPositionTween { get; set; }
 
     public const float      StandardWidthInMeters = CardAspectRatio.Standard;
-    public       Distance2D UnscaledSize { get; } = new Vector2(StandardWidthInMeters, 1).Meters();
+    public       Distance2D UnscaledSize { get; } = new Vector2(StandardWidthInMeters, 1).Meters;
 
     public ICardData CardData { get; set; } = CreatureData.JunkRhino;
 

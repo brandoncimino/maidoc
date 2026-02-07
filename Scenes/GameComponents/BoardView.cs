@@ -67,7 +67,7 @@ public partial class BoardView : Node2D, ISceneRoot<BoardView, BoardView.SpawnIn
     public readonly record struct SpawnInput() {
         public required PlayerId            PlayerId    { get; init; }
         public required int                 LaneCount   { get; init; }
-        public          Distance2D          CellSize    { get; init; } = new Vector2(1.5f, 1.2f).Meters();
+        public          Distance2D          CellSize    { get; init; } = new Vector2(1.5f, 1.2f).Meters;
         public required Action<CellAddress> OnCellClick { get; init; }
     }
 }

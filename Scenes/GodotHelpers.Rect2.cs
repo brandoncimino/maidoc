@@ -38,7 +38,7 @@ public static partial class GodotHelpers {
         Side                 side,
         float                sideLerpAmount = .5f
     ) {
-        return rect.Meters.GetSidePoint(side, sideLerpAmount).Meters();
+        return rect.Meters.GetSidePoint(side, sideLerpAmount).Meters;
     }
 
     public static Vector2 GetSidePoint(
@@ -91,7 +91,7 @@ public static partial class GodotHelpers {
             sideLerpAmount
         );
 
-        return meters.Meters();
+        return meters.Meters;
     }
 
     public static Rect2 Rect2BySide(
@@ -292,10 +292,10 @@ public static partial class GodotHelpers {
     }
 
     public static Distance GetProjectScreenWidth() =>
-        ProjectSettings.GetSetting("display/window/size/viewport_width").AsSingle().GodotPixels();
+        ProjectSettings.GetSetting("display/window/size/viewport_width").AsSingle().GodotPixels;
 
     public static Distance GetProjectScreenHeight() =>
-        ProjectSettings.GetSetting("display/window/size/viewport_height").AsSingle().GodotPixels();
+        ProjectSettings.GetSetting("display/window/size/viewport_height").AsSingle().GodotPixels;
 
     public static Distance2D GetProjectScreenSize() => new(GetProjectScreenWidth(), GetProjectScreenHeight());
 }

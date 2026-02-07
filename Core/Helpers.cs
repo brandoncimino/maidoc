@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 
 namespace maidoc.Core;
 
@@ -155,5 +156,26 @@ public static class Helpers {
             yield return (previous, current);
             previous = current;
         }
+    }
+
+    [System.Diagnostics.Contracts.Pure]
+    public static T Sum<T>([InstantHandle] this IEnumerable<T> source, T separator = default)
+        where T : struct, IAdditionOperators<T, T, T> {
+        var sum = default(T);
+
+        var first = true;
+        foreach (var it in source) {
+            if (first) {
+                sum   = it;
+                first = false;
+            }
+            else {
+                sum += separator;
+            }
+
+            sum += it;
+        }
+
+        return sum;
     }
 }

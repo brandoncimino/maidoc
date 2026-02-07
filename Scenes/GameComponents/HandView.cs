@@ -3,8 +3,10 @@ using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using BSharp.Core;
 using Godot;
 using maidoc.Core;
+using Vector2 = Godot.Vector2;
 
 namespace maidoc.Scenes.GameComponents;
 
@@ -90,36 +92,45 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
             return;
         }
 
-        var cardSizeInMeters = handCards.First().SizeInMeters;
+        var cardSize = handCards.First().UnscaledSize;
 
-        var (start, interval) = CalculateLayoutFromCenter(
-            _unscaledSize.Value.X.Meters,
-            cardSizeInMeters.X,
-            handCards.Length
+        // var (start, interval) = CalculateLayoutFromCenter(
+        //     _unscaledSize.Value.X.Meters,
+        //     cardSize.X.Meters,
+        //     handCards.Length
+        // );
+
+        var cardHorizontalLayout = Lineup.LineupFromCenter(
+            handCards.Select(it => it.UnscaledSize.X)
+                     .ToImmutableArray(),
+            LineDistance.ByCenter(this.LocalPosition.X, UnscaledSize.X)
         );
 
-        var excessCardHeight = cardSizeInMeters.Y / 2 - _unscaledSize.Value.Y.Meters;
-        var yTucked          = excessCardHeight;
-        var yFocused         = -cardSizeInMeters.Y / 2;
+        GD.Print($"Computed {nameof(cardHorizontalLayout)}: {cardHorizontalLayout.JoinString(", ")}");
 
-        this.blog(
-            cardSizeInMeters.Y,
-            cardSizeInMeters.Y / 2,
-            _unscaledSize.Value.Y,
-            excessCardHeight,
-            yTucked,
-            yFocused
-        );
+        var handBottom = UnscaledSize.Y / 2;
+        var handTop    = -handBottom;
 
         for (var i = 0; i < handCards.Length; i++) {
             var card = handCards[i];
 
-            card.AnimatePosition(
-                new Vector2(
-                    start + (interval * i),
-                    card.IsFocused ? yFocused : yTucked
-                ).Meters()
+            var cardVerticalLine = card.IsFocused switch {
+                true => LineDistance.ByEndAndSize(
+                    handBottom,
+                    card.UnscaledSize.Y
+                ),
+                false => LineDistance.ByStartAndSize(
+                    handTop,
+                    card.UnscaledSize.Y
+                )
+            };
+
+            var targetPosition = new Distance2D(
+                cardHorizontalLayout[i].Center,
+                cardVerticalLine.Center
             );
+
+            card.AnimatePosition(targetPosition);
 
             var neighbors = i.GetNeighbors(handCards.Length, _boundaryNavigation);
 

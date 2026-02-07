@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Godot;
 using Vector2 = Godot.Vector2;
@@ -36,10 +37,10 @@ public readonly record struct Distance :
 
     public static Distance Of(float amount, Unit unit) {
         return unit switch {
-            Unit.Meters        => amount.Meters(),
-            Unit.GodotPixels   => amount.GodotPixels(),
-            Unit.ScreenWidths  => amount.ScreenWidths(),
-            Unit.ScreenHeights => amount.ScreenHeights(),
+            Unit.Meters        => amount.Meters,
+            Unit.GodotPixels   => amount.GodotPixels,
+            Unit.ScreenWidths  => amount.ScreenWidths,
+            Unit.ScreenHeights => amount.ScreenHeights,
             Unit.Screens => throw new NotSupportedException(
                 $"A one-dimensional {nameof(Distance)} cannot be defined in {nameof(Unit.Screens)}. Please use {nameof(Unit.ScreenWidths)} or {nameof(Unit.ScreenHeights)} instead."
             ),
@@ -54,21 +55,21 @@ public readonly record struct Distance :
 
     #region Operators
 
-    public static Distance operator +(Distance a, Distance b) => (a.Meters + b.Meters).Meters();
-    public static Distance operator -(Distance a, Distance b) => (a.Meters - b.Meters).Meters();
+    public static Distance operator +(Distance a, Distance b) => (a.Meters + b.Meters).Meters;
+    public static Distance operator -(Distance a, Distance b) => (a.Meters - b.Meters).Meters;
 
-    public static Distance operator *(Distance distance,   float multiplier) => (distance.Meters * multiplier).Meters();
+    public static Distance operator *(Distance distance,   float multiplier) => (distance.Meters * multiplier).Meters;
     public static Distance operator *(float    multiplier, Distance distance) => distance * multiplier;
 
-    public static Distance operator /(Distance distance, float    divisor)  => (distance.Meters / divisor).Meters();
+    public static Distance operator /(Distance distance, float    divisor)  => (distance.Meters / divisor).Meters;
     public static Distance operator /(float    divisor,  Distance distance) => distance / divisor;
 
-    public static Distance2D operator *(Distance distance, Vector2  scale)    => (distance.Meters * scale).Meters();
+    public static Distance2D operator *(Distance distance, Vector2  scale)    => (distance.Meters * scale).Meters;
     public static Distance2D operator *(Vector2  scale,    Distance distance) => distance * scale;
 
     public static float operator /(Distance left, Distance right) => left.Meters / right.Meters;
 
-    public static Distance operator -(Distance value) => (-value.Meters).Meters();
+    public static Distance operator -(Distance value) => (-value.Meters).Meters;
 
     public int CompareTo(Distance other) => Meters.CompareTo(other.Meters);
 
@@ -100,8 +101,8 @@ public readonly record struct Distance2D(Distance X, Distance Y) :
 
     public static Distance2D Of(Vector2 amount, Distance.Unit unit) {
         return unit switch {
-            Distance.Unit.Meters        => amount.Meters(),
-            Distance.Unit.GodotPixels   => amount.GodotPixels(),
+            Distance.Unit.Meters        => amount.Meters,
+            Distance.Unit.GodotPixels   => amount.GodotPixels,
             Distance.Unit.ScreenWidths  => amount.Screens(RectMarker.ReferenceAxis.X),
             Distance.Unit.ScreenHeights => amount.Screens(RectMarker.ReferenceAxis.Y),
             Distance.Unit.Screens       => amount.Screens(RectMarker.ReferenceAxis.Corresponding),
@@ -114,30 +115,57 @@ public readonly record struct Distance2D(Distance X, Distance Y) :
     #region Operators
 
     public static Distance2D operator *(Distance2D distance, float multiplier) =>
-        (distance.Meters * multiplier).Meters();
+        (distance.Meters * multiplier).Meters;
 
-    public static Distance2D operator /(Distance2D distance, float divisor) => (distance.Meters / divisor).Meters();
+    public static Distance2D operator /(Distance2D distance, float divisor) => (distance.Meters / divisor).Meters;
 
     public static Distance2D operator *(float multiplier, Distance2D distance) =>
-        (distance.Meters * multiplier).Meters();
+        (distance.Meters * multiplier).Meters;
 
 
     public static Distance2D operator *(Distance2D distance, Vector2 multiplier) =>
-        (distance.Meters * multiplier).Meters();
+        (distance.Meters * multiplier).Meters;
 
-    public static Distance2D operator /(Distance2D distance, Vector2 divisor) => (distance.Meters / divisor).Meters();
+    public static Distance2D operator /(Distance2D distance, Vector2 divisor) => (distance.Meters / divisor).Meters;
 
     public static Distance2D operator *(Vector2 multiplier, Distance2D distance) =>
-        (distance.Meters * multiplier).Meters();
+        (distance.Meters * multiplier).Meters;
 
 
     public static Distance2D operator +(Distance2D left, Distance2D right) => new(left.X + right.X, left.Y + right.Y);
     public static Distance2D operator -(Distance2D left, Distance2D right) => new(left.X - right.X, left.Y - right.Y);
 
     public static Vector2 operator /(Distance2D    left, Distance2D right) => left.Meters / right.Meters;
-    public static Distance2D operator -(Distance2D value) => (-value.Meters).Meters();
+    public static Distance2D operator -(Distance2D value) => (-value.Meters).Meters;
 
     #endregion
+}
+
+/// <summary>
+/// In the same way that a <see cref="RectDistance"/>
+/// As <see cref="Distance2D"/> is to <see cref="RectDistance"/>,
+/// <see cref="Distance"/> is to <see cref="LineDistance"/>.
+/// </summary>
+/// <remarks>
+/// The "canonical" second field is <see cref="Size"/> instead of <see cref="End"/> to mimic <see cref="RectDistance"/> (which in turn mimics <see cref="Rect2"/>).
+/// </remarks>
+public readonly record struct LineDistance(
+    Distance Start,
+    Distance Size
+) {
+    public Distance End    => Start + Size;
+    public Distance Center => Start + Size / 2;
+
+    public static LineDistance ByCenter(Distance       center, Distance size) => new(center     - size / 2, size);
+    public static LineDistance ByStartAndEnd(Distance  start,  Distance end)  => new(start, end - start);
+    public static LineDistance ByStartAndSize(Distance start,  Distance size) => new(start, size);
+    public static LineDistance ByEndAndSize(Distance   end,    Distance size) => new(end - size, size);
+
+    public LineDistance WithCenter(Distance center) => ByCenter(center, Size);
+
+    public override string ToString() {
+        return $"{Start} ⇥ {End}";
+    }
 }
 
 public readonly record struct RectDistance(
@@ -147,9 +175,12 @@ public readonly record struct RectDistance(
     public Rect2 Meters      => new(Position.Meters, Size.Meters);
     public Rect2 GodotPixels => new(Position.GodotPixels, Size.GodotPixels);
 
-    public Distance2D GetCorner(Corner corner) => Meters.GetCorner(corner).Meters();
-    public Distance   GetSide(Side     side)   => Meters.GetSide(side).Meters();
-    public Distance2D GetCenter()              => Meters.GetCenter().Meters();
+    public Distance2D GetCorner(Corner corner) => Meters.GetCorner(corner).Meters;
+    public Distance   GetSide(Side     side)   => Meters.GetSide(side).Meters;
+    public Distance2D GetCenter()              => Meters.GetCenter().Meters;
+
+    public LineDistance Horizontal => new(Position.X, Size.X);
+    public LineDistance Vertical   => new(Position.Y, Size.Y);
 
     private string Icon => Size.X.CompareTo(Size.Y) switch {
         < 0 => "▯",
@@ -162,41 +193,50 @@ public readonly record struct RectDistance(
     }
 }
 
+[SuppressMessage("Performance", "CA1822:Mark members as static")]
 public static class DistanceExtensions {
-    public static Distance Meters(this      float meters)      => new() { Meters      = meters };
-    public static Distance Meters(this      int   meters)      => new() { Meters      = meters };
-    public static Distance GodotPixels(this float godotPixels) => new() { GodotPixels = godotPixels };
+    extension(float value) {
+        public Distance Meters      => new() { Meters      = value };
+        public Distance GodotPixels => new() { GodotPixels = value };
 
-    public static Distance ScreenWidths(this float screenWidths) => GodotHelpers.GetProjectScreenWidth() * screenWidths;
-
-    public static Distance ScreenHeights(this float screenHeights) =>
-        GodotHelpers.GetProjectScreenHeight() * screenHeights;
-
-    public static Distance2D Meters(this Vector2 meters) => new(meters.X.Meters(), meters.Y.Meters());
-
-    public static Distance2D GodotPixels(this Vector2 godotPixels) => new(
-        godotPixels.X.GodotPixels(),
-        godotPixels.Y.GodotPixels()
-    );
-
-    public static Distance2D Screens(
-        this in Vector2          screens,
-        RectMarker.ReferenceAxis referenceAxis = RectMarker.ReferenceAxis.Corresponding
-    ) {
-        var reference = GodotHelpers.GetProjectScreenSize().GodotPixels;
-
-        return (referenceAxis switch {
-            RectMarker.ReferenceAxis.Corresponding => screens * reference,
-            RectMarker.ReferenceAxis.X => screens * reference.X,
-            RectMarker.ReferenceAxis.Y => screens * reference.Y,
-            _ => throw new ArgumentOutOfRangeException(nameof(referenceAxis), referenceAxis, null)
-        }).GodotPixels();
+        public Distance ScreenWidths  => GodotHelpers.GetProjectScreenWidth()  * value;
+        public Distance ScreenHeights => GodotHelpers.GetProjectScreenHeight() * value;
     }
 
-    public static RectDistance Meters(this Rect2 meters) => new(meters.Position.Meters(), meters.Size.Meters());
+    extension(int value) {
+        public Distance Meters => new() { Meters = value };
+    }
 
-    public static RectDistance GodotPixels(this Rect2 godotPixels) => new(
-        godotPixels.Position.GodotPixels(),
-        godotPixels.Size.GodotPixels()
-    );
+    extension(in Vector2 meters) {
+        public Distance2D Meters => new(meters.X.Meters, meters.Y.Meters);
+
+        public Distance2D GodotPixels =>
+            new(
+                meters.X.GodotPixels,
+                meters.Y.GodotPixels
+            );
+
+        public Distance2D Screens(
+            RectMarker.ReferenceAxis referenceAxis = RectMarker.ReferenceAxis.Corresponding
+        ) {
+            var reference = GodotHelpers.GetProjectScreenSize().GodotPixels;
+
+            return (referenceAxis switch {
+                RectMarker.ReferenceAxis.Corresponding => meters * reference,
+                RectMarker.ReferenceAxis.X => meters * reference.X,
+                RectMarker.ReferenceAxis.Y => meters * reference.Y,
+                _ => throw new ArgumentOutOfRangeException(nameof(referenceAxis), referenceAxis, null)
+            }).GodotPixels;
+        }
+    }
+
+    extension(Rect2 meters) {
+        public RectDistance Meters => new(meters.Position.Meters, meters.Size.Meters);
+
+        public RectDistance GodotPixels =>
+            new(
+                meters.Position.GodotPixels,
+                meters.Size.GodotPixels
+            );
+    }
 }

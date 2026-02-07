@@ -11,6 +11,17 @@ public interface ISceneRoot<TSelf, in TInput> where TSelf : Node, ISceneRoot<TSe
     }
 }
 
+public static class SceneRootExtensions {
+    extension<TSelf, TInput>(ISceneRoot<TSelf, TInput> sceneRoot) where TSelf : Node, ISceneRoot<TSelf, TInput> {
+        public static TSelf Spawn(
+            TInput spawnInput
+        ) {
+            return TSelf.InstantiateRawScene()
+                        .InitializeSelf(spawnInput);
+        }
+    }
+}
+
 // public interface ISceneRoot2<TSelf, in TInput>
 // : ISceneRoot<TSelf, TInput>
 //     where TSelf : Node, ISceneRoot2<TSelf, TInput> {

@@ -55,8 +55,8 @@ public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, Pla
 
         public static PlaymatLayout Default() {
             return Create(
-                new Vector2(0.4f, 0.4f).Meters(),
-                .6f.ScreenWidths(),
+                new Vector2(0.4f, 0.4f).Meters,
+                .6f.ScreenWidths,
                 new Vector2(.7f, .35f).Screens()
             );
         }
@@ -75,10 +75,10 @@ public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, Pla
             var deckRect = GodotHelpers.Rect2BySide(
                 Side.Right,
                 boardRect.GetSidePoint(Side.Left) + (Vector2.Left * boardPadding),
-                new Distance2D(1.Meters(), boardRect.Height() / 2)
+                new Distance2D(1.Meters, boardRect.Height() / 2)
             );
 
-            var graveyardRect = deckRect.Meters.Mirror(Vector2.Axis.Y).Meters();
+            var graveyardRect = deckRect.Meters.Mirror(Vector2.Axis.Y).Meters;
 
             var belowBoardSpace = GodotHelpers.GetProjectScreenHeight() / 2 - boardRect.GetSide(Side.Bottom);
             var handHeight      = belowBoardSpace                           - boardPadding.Y;
@@ -147,7 +147,7 @@ public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, Pla
                     PlayerId     = spawnInput.PlayerId,
                     UnscaledSize = handRect.Size
                 }
-            ).AtPosition(handRect.Position)
+            ).AtPosition(handRect.GetCenter())
         );
     }
 

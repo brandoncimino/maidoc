@@ -24,7 +24,7 @@ public partial class Deck : Node2D, ISceneRoot<Deck, Deck.SpawnInput>, ICardZone
             }
         );
 
-        _unscaledSize.Enfranchise(input.UnscaledSizeInMeters.Meters());
+        _unscaledSize.Enfranchise(input.UnscaledSizeInMeters.Meters);
 
         _cardHolder.Enfranchise(() => {
                 var node = new Node2D() {
