@@ -178,4 +178,9 @@ public static class Helpers {
 
         return sum;
     }
+
+    extension<T>(ImmutableArray<T>) {
+        public static ImmutableArray<T> operator +(ImmutableArray<T> array, T                 item) => array.Add(item);
+        public static ImmutableArray<T> operator +(ImmutableArray<T> a,     ImmutableArray<T> b)    => a.AddRange(b);
+    }
 }

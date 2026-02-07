@@ -90,7 +90,7 @@ public class PaperCardGroup : IPaperZone {
             throw new ArgumentException($"Can't add {paperCard} because it is already here!");
         }
 
-        _cards = _cards.Add(paperCard);
+        _cards += paperCard;
     }
 
     public ImmutableArray<SerialNumber>.Enumerator GetEnumerator() => _cards.GetEnumerator();
