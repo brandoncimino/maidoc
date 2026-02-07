@@ -1,20 +1,31 @@
+using System;
 using System.Collections.Immutable;
-using System.Linq;
+using System.Numerics;
 using maidoc.Scenes;
 
 namespace maidoc;
 
 public static class Lineup {
+    private static T Sum<T>(this ReadOnlySpan<T> span) where T : struct, IAdditionOperators<T, T, T> {
+        var sum = default(T);
+
+        foreach (var item in span) {
+            sum += item;
+        }
+
+        return sum;
+    }
+
     public static ImmutableArray<LineDistance> LineupFromCenter(
-        ImmutableArray<Distance> itemSizes,
-        LineDistance             availableSpace,
-        Distance                 paddingBetweenItems = default
+        ReadOnlySpan<Distance> itemSizes,
+        LineDistance           availableSpace,
+        Distance               paddingBetweenItems = default
     ) {
-        if (itemSizes.IsDefaultOrEmpty) {
+        if (itemSizes.IsEmpty) {
             return [];
         }
 
-        var sizeFromItems        = itemSizes.Sum(it => it.Meters).Meters;
+        var sizeFromItems        = itemSizes.Sum();
         var sizeFromPadding      = (itemSizes.Length - 1) * paddingBetweenItems;
         var totalComfortableSize = sizeFromItems + sizeFromPadding;
 
@@ -38,7 +49,6 @@ public static class Lineup {
                 startPoint += paddingBetweenItems;
             }
 
-            // builder.Add(new LineDistance(startPoint, itemSizes[i]));
             builder.Add(new LineDistance(startPoint * smushFactor, itemSizes[i]));
             startPoint += itemSizes[i];
         }
