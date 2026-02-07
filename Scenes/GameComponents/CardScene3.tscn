@@ -24,10 +24,12 @@ offset_left = -35.357143
 offset_top = -49.5
 offset_right = 36.07143
 offset_bottom = 50.5
+focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ku61r")
 
 [node name="MarginContainer" type="MarginContainer" parent="Face/FaceContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
@@ -35,14 +37,27 @@ theme_override_constants/margin_bottom = 5
 
 [node name="FaceText" type="RichTextLabel" parent="Face/FaceContainer/MarginContainer"]
 layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
 theme_override_font_sizes/normal_font_size = 6
 theme_override_font_sizes/bold_font_size = 6
 theme_override_font_sizes/bold_italics_font_size = 6
 theme_override_font_sizes/italics_font_size = 6
 theme_override_font_sizes/mono_font_size = 6
+text = "asdfasdfasdfasdfasd
+asdfasdfasdfs
+asdfasdfasdfasdfasd
+asdfasdfasdfs
+asdfasdfasdfasdfasd
+asdfasdfasdfs
+asdfasdfasdfasdfasd
+asdfasdfasdfs
+asdfasdfasdfasdfasd
+asdfasdfasdfs"
 
 [node name="CardBack" type="TextureRect" parent="Face/FaceContainer"]
 visible = false
 layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("2_d1hgt")
 expand_mode = 4

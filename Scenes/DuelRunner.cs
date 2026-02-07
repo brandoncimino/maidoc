@@ -75,7 +75,8 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
                                  .Named($"Card {serialNumber}")
                                  .InitializeSelf(
                                      new() {
-                                         CardData = paperCard.Data
+                                         CardData = paperCard.Data,
+                                         OnClick  = number => { GD.Print($"CLICKED {number}!"); }
                                      }
                                  );
             }
@@ -115,7 +116,7 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
 
         var cardObject = GetOrSpawnCard(cardMovedEvent.Card.SerialNumber);
         var originNode = GetZoneNode(cardMovedEvent.From);
-        cardObject.LocalPosition = originNode.LocalPosition;
+        cardObject.Center = originNode.Center;
 
         var destinationNode = GetZoneNode(cardMovedEvent.To);
 

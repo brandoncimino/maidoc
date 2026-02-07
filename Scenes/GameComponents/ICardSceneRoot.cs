@@ -16,13 +16,13 @@ public interface ICardSceneRoot : IFocusDelegated<ICardSceneRoot>, IGameNode2D {
         double         durationInSeconds = .1,
         Action<Tween>? moreTweening      = null
     ) {
-        GD.Print($"Animating {this} from {this.LocalPosition} → {destination}");
+        GD.Print($"Animating {this} from {this.Center} → {destination}");
 
         CurrentPositionTween?.Kill();
         CurrentPositionTween = CreateTween();
         CurrentPositionTween.TweenMethod(
-                                Callable.From<Vector2>(posInMeters => this.LocalPosition = posInMeters.Meters),
-                                this.LocalPosition.Meters,
+                                Callable.From<Vector2>(posInMeters => this.Center = posInMeters.Meters),
+                                this.Center.Meters,
                                 destination.Meters,
                                 durationInSeconds
                             )

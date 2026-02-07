@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Godot;
@@ -12,6 +13,8 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
     private readonly LazyChild<RichTextLabel> _faceText      = new("FaceText");
     private readonly LazyChild<Control>       _cardBack      = new("CardBack");
 
+    private readonly Disenfranchised<Area2D> _clickBox = new();
+
     public Control FocusableControl => _faceContainer.Get(this);
 
     private static PackedScene? _packedScene;
@@ -25,8 +28,10 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
 
     Tween? ICardSceneRoot.CurrentPositionTween { get; set; }
 
-    public const float      StandardWidthInMeters = CardAspectRatio.Standard;
-    public       Distance2D UnscaledSize { get; } = new Vector2(StandardWidthInMeters, 1).Meters;
+    private static readonly Distance2D StandardSize = new Vector2(CardAspectRatio.Standard, 1).Meters * 2;
+
+    private readonly Disenfranchised<Distance2D> _unscaledSize = new();
+    public           Distance2D                  UnscaledSize => _unscaledSize.Value;
 
     public ICardData CardData { get; set; } = CreatureData.JunkRhino;
 
@@ -39,8 +44,10 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
     [Export]
     public bool FaceDown { get; set; }
 
-    public readonly record struct SpawnInput {
-        public required ICardData CardData { get; init; }
+    public readonly record struct SpawnInput() {
+        public required ICardData            CardData     { get; init; }
+        public required Action<SerialNumber> OnClick      { get; init; }
+        public          Distance2D           UnscaledSize { get; init; } = StandardSize;
     }
 
     [ExportToolButton(nameof(NormalizeSizes))]
@@ -55,13 +62,16 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
     public Callable RefreshPlaceholderTextButton => Callable.From(RefreshFace);
 
     private void RefreshFace() {
-        _cardBack.Get(this).Visible = FaceDown;
-        _faceText.Get(this).Text    = "";
+        _faceContainer.Get(this).Size              = UnscaledSize.GodotPixels;
+        _faceContainer.Get(this).CustomMinimumSize = UnscaledSize.GodotPixels;
+        _cardBack.Get(this).Visible                = FaceDown;
+        _faceText.Get(this).Text                   = "";
         _faceText.Get(this).AppendCardFaceText(CardData);
     }
 
     public CardScene3 InitializeSelf(SpawnInput input) {
         CardData = input.CardData;
+        _unscaledSize.Enfranchise(input.UnscaledSize);
         RefreshFace();
         return this;
     }
@@ -84,6 +94,7 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
     private bool _focusedByMouse;
 
     private void _OnMouseEntered() {
+        GD.Print($"Mouse entered {this.Name}; grabbing focus");
         _focusedByMouse = true;
         GrabFocus();
     }
@@ -99,7 +110,6 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
 
     public override void _Ready() {
         var face = _faceContainer.Get(this);
-        face.Name += this.Name;
 
         face.MouseEntered += _OnMouseEntered;
         face.MouseExited  += _OnMouseExited;

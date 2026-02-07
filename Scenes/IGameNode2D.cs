@@ -12,13 +12,9 @@ public static class GameNode2DExtensions {
     extension(IGameNode2D gameNode2D) {
         public Distance2D Size => gameNode2D.UnscaledSize * gameNode2D.AsNode2D.Scale;
 
-        public Distance2D LocalPosition {
+        public Distance2D Center {
             get => gameNode2D.AsNode2D.Position.GodotPixels;
             set => gameNode2D.AsNode2D.Position = value.GodotPixels;
-        }
-
-        public RectDistance LocalRect() {
-            return new RectDistance(gameNode2D.LocalPosition, gameNode2D.Size);
         }
     }
 }

@@ -26,7 +26,7 @@ public static partial class GodotHelpers {
         this T     gameNode2D,
         Distance2D position
     ) where T : IGameNode2D {
-        gameNode2D.LocalPosition = position;
+        gameNode2D.Center = position;
         return gameNode2D;
     }
 

@@ -96,7 +96,7 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
             handCards.Select(it => it.UnscaledSize.X)
                      .ToImmutableArray()
                      .AsSpan(),
-            LineDistance.ByCenter(this.LocalPosition.X, UnscaledSize.X),
+            LineDistance.ByCenter(this.Center.X, UnscaledSize.X),
             .05f.Meters
         );
 
