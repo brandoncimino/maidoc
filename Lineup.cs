@@ -34,7 +34,7 @@ public static class Lineup {
         );
 
         for (int i = 0; i < itemSizes.Length; i++) {
-            if (i > 1) {
+            if (i > 0) {
                 startPoint += paddingBetweenItems;
             }
 

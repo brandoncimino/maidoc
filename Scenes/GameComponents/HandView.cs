@@ -3,7 +3,6 @@ using System.Collections.Immutable;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using BSharp.Core;
 using Godot;
 using maidoc.Core;
 using Vector2 = Godot.Vector2;
@@ -92,21 +91,12 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
             return;
         }
 
-        var cardSize = handCards.First().UnscaledSize;
-
-        // var (start, interval) = CalculateLayoutFromCenter(
-        //     _unscaledSize.Value.X.Meters,
-        //     cardSize.X.Meters,
-        //     handCards.Length
-        // );
-
         var cardHorizontalLayout = Lineup.LineupFromCenter(
             handCards.Select(it => it.UnscaledSize.X)
                      .ToImmutableArray(),
-            LineDistance.ByCenter(this.LocalPosition.X, UnscaledSize.X)
+            LineDistance.ByCenter(this.LocalPosition.X, UnscaledSize.X),
+            .1f.Meters
         );
-
-        GD.Print($"Computed {nameof(cardHorizontalLayout)}: {cardHorizontalLayout.JoinString(", ")}");
 
         var handBottom = UnscaledSize.Y / 2;
         var handTop    = -handBottom;
