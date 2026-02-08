@@ -31,7 +31,7 @@ public readonly record struct Distance :
         Screens
     }
 
-    public override string ToString() => $"{Meters} m";
+    public override string ToString() => $"{Meters:0.## 'm'}";
 
     #region Factories
 
@@ -93,7 +93,15 @@ public readonly record struct Distance2D(Distance X, Distance Y) :
     public Vector2 Meters      => new(X.Meters, Y.Meters);
     public Vector2 GodotPixels => new(X.GodotPixels, Y.GodotPixels);
 
-    public override string ToString() => $"{X.Meters} ⨉ {Y.Meters} m";
+    /// <remarks>
+    /// I finally found some sort of standard: <a href="https://physics.nist.gov/cuu/Units/checklist.html">SI Unit rules and style conventions</a>,
+    /// #12, "Math notation", which gives the examples:
+    /// <ul>
+    /// <li>proper: 35 cm x 48 cm</li>
+    /// <li>improper: 35 x 48 cm</li>
+    /// </ul>
+    /// </remarks>
+    public override string ToString() => $"({X} ⨉ {Y})";
 
     #region Factories
 
@@ -164,7 +172,7 @@ public readonly record struct LineDistance(
     public LineDistance WithCenter(Distance center) => ByCenter(center, Size);
 
     public override string ToString() {
-        return $"{Start} ⇥ {End}";
+        return $"[{Start} ⇥ {End}]";
     }
 }
 
@@ -177,7 +185,7 @@ public readonly record struct RectDistance(
 
     public Distance2D GetCorner(Corner corner) => Meters.GetCorner(corner).Meters;
     public Distance   GetSide(Side     side)   => Meters.GetSide(side).Meters;
-    public Distance2D GetCenter()              => Meters.GetCenter().Meters;
+    public Distance2D Center                   => Meters.GetCenter().Meters;
 
     public LineDistance Horizontal => new(Position.X, Size.X);
     public LineDistance Vertical   => new(Position.Y, Size.Y);
@@ -191,6 +199,20 @@ public readonly record struct RectDistance(
     public override string ToString() {
         return $"{Icon} {Position}, {Size}";
     }
+
+    #region Factories
+
+    public static RectDistance ByCenter(Distance2D center, Distance2D size) => new(center - size / 2, size);
+
+    public static RectDistance ByCorner(Corner corner, Distance2D cornerPosition, Distance2D size) =>
+        GodotHelpers.Rect2ByCorner(corner, cornerPosition.Meters, size.Meters).Meters;
+
+    public static RectDistance ByLines(LineDistance x, LineDistance y) => new RectDistance(
+        new Distance2D(x.Start, y.Start),
+        new Distance2D(x.Size,  y.Size)
+    );
+
+    #endregion
 }
 
 [SuppressMessage("Performance", "CA1822:Mark members as static")]

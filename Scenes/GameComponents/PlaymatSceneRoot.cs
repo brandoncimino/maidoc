@@ -147,7 +147,7 @@ public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, Pla
                     PlayerId     = spawnInput.PlayerId,
                     UnscaledSize = handRect.Size
                 }
-            ).AtPosition(handRect.GetCenter())
+            ).AtPosition(handRect.Center)
         );
     }
 
@@ -161,7 +161,7 @@ public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, Pla
                     }
                 )
                 .Named($"{spawnInput.PlayerId} Deck")
-                .AtPosition(deckRect.GetCenter().GodotPixels)
+                .AtPosition(deckRect.Center.GodotPixels)
         );
     }
 

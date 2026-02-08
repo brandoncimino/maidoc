@@ -16,5 +16,7 @@ public static class GameNode2DExtensions {
             get => gameNode2D.AsNode2D.Position.GodotPixels;
             set => gameNode2D.AsNode2D.Position = value.GodotPixels;
         }
+
+        public RectDistance GameRect => RectDistance.ByCenter(gameNode2D.Center, gameNode2D.UnscaledSize);
     }
 }

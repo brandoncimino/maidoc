@@ -13,8 +13,6 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
     private readonly LazyChild<RichTextLabel> _faceText      = new("FaceText");
     private readonly LazyChild<Control>       _cardBack      = new("CardBack");
 
-    private readonly Disenfranchised<Area2D> _clickBox = new();
-
     public Control FocusableControl => _faceContainer.Get(this);
 
     private static PackedScene? _packedScene;
@@ -64,6 +62,7 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
     private void RefreshFace() {
         _faceContainer.Get(this).Size              = UnscaledSize.GodotPixels;
         _faceContainer.Get(this).CustomMinimumSize = UnscaledSize.GodotPixels;
+        _faceContainer.Get(this).Position          = -UnscaledSize.GodotPixels / 2;
         _cardBack.Get(this).Visible                = FaceDown;
         _faceText.Get(this).Text                   = "";
         _faceText.Get(this).AppendCardFaceText(CardData);
