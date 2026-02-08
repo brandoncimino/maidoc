@@ -1,6 +1,9 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Godot;
 using maidoc.Core;
+using maidoc.Core.Cards;
 
 namespace maidoc.Scenes.GameComponents;
 
@@ -57,13 +60,21 @@ public partial class Deck : Node2D, ISceneRoot<Deck, Deck.SpawnInput>, ICardZone
         _cardHolder.Value.AddChild(card.AsNode2D);
 
         card.AnimatePosition(
-            ((IGameNode2D)this).Center,
+            this.Center,
             .2,
             tween => {
                 GD.Print($"I ({card}) made it to the deck; disappearing.");
                 tween.TweenCallback(Callable.From(() => card.AsNode2D.Visible = false));
             }
         );
+    }
+
+    public bool TryGetCard(SerialNumber serialNumber, [NotNullWhen(true)] out ICardSceneRoot? card) {
+        card = _cardHolder.Value
+                          .EnumerateChildren(1)
+                          .OfType<ICardSceneRoot>()
+                          .SingleOrDefault(it => it.SerialNumber == serialNumber);
+        return card != null;
     }
 
     public static Deck InstantiateRawScene() {

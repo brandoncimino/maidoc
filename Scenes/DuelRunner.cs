@@ -76,7 +76,8 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
                                  .InitializeSelf(
                                      new() {
                                          CardData = paperCard.Data,
-                                         OnClick  = number => { GD.Print($"CLICKED {number}!"); }
+                                         OnClick  = number => { GD.Print($"CLICKED {number}!"); },
+                                         SerialNumber = serialNumber
                                      }
                                  );
             }
@@ -114,20 +115,11 @@ public partial class DuelRunner : Node2D, ISceneRoot<DuelRunner, DuelRunner.Spaw
     private bool ConsumeCardMovedEvent(CardMovedEvent cardMovedEvent) {
         GD.Print($"Consuming: {cardMovedEvent}");
 
-        var cardObject = GetOrSpawnCard(cardMovedEvent.Card.SerialNumber);
         var originNode = GetZoneNode(cardMovedEvent.From);
-        cardObject.Center = originNode.Center;
+        var cardObject = GetOrSpawnCard(cardMovedEvent.Card.SerialNumber);
+        cardObject.AsNode2D.AsChildOf(originNode.AsNode2D);
 
-        var destinationNode = GetZoneNode(cardMovedEvent.To);
-
-        if (destinationNode is HandView handSceneRoot) {
-            handSceneRoot.AddCard(cardObject);
-        }
-        else {
-            GD.PrintErr(
-                $"Unhandled {nameof(destinationNode)} for {cardMovedEvent.To}: {destinationNode.AsNode2D.Describe()}"
-            );
-        }
+        GetZoneNode(cardMovedEvent.To).AddCard(cardObject);
 
         return true;
     }

@@ -1,5 +1,6 @@
 using System;
 using Godot;
+using maidoc.Core.Cards;
 using maidoc.Scenes.Navigation;
 
 namespace maidoc.Scenes.GameComponents;
@@ -10,6 +11,8 @@ public interface ICardSceneRoot : IFocusDelegated<ICardSceneRoot>, IGameNode2D {
     protected Tween? CurrentPositionTween { get; set; }
 
     protected Tween CreateTween();
+    
+    public SerialNumber SerialNumber { get; }
 
     public void AnimatePosition(
         Distance2D     destination,

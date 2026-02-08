@@ -24,6 +24,9 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
         return PackedScene.Instantiate<CardScene3>();
     }
 
+    private readonly Disenfranchised<SerialNumber> _serialNumber = new();
+    public           SerialNumber                  SerialNumber => _serialNumber.Value;
+
     Tween? ICardSceneRoot.CurrentPositionTween { get; set; }
 
     private static readonly Distance2D StandardSize = new Vector2(CardAspectRatio.Standard, 1).Meters * 2;
@@ -46,6 +49,7 @@ public partial class CardScene3 : Node2D, ISceneRoot<CardScene3, CardScene3.Spaw
         public required ICardData            CardData     { get; init; }
         public required Action<SerialNumber> OnClick      { get; init; }
         public          Distance2D           UnscaledSize { get; init; } = StandardSize;
+        public required SerialNumber        SerialNumber { get; init; }
     }
 
     [ExportToolButton(nameof(NormalizeSizes))]

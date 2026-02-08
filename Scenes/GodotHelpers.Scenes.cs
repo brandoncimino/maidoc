@@ -41,14 +41,17 @@ public static partial class GodotHelpers {
     public static T AsChildOf<T>(
         this T            self,
         Node              parent,
-        bool              forceReadableName = false,
-        Node.InternalMode internalMode      = Node.InternalMode.Disabled
+        bool keepGlobalTransform = true
     ) where T : Node {
-        // TODO: Is there any particular reason to use `Reparent` instead?
-        self.GetParent()?.RemoveChild(self);
-
-        parent.AddChild(self, forceReadableName, internalMode);
-
+        // 🙋‍♀️ Is there any particular reason to use `Reparent` instead?
+        // ✅ YES! It lets you maintain the object's global transform, rather than "moving" the object to be relative to its new parent.
+        if (self.GetParent() != null) {
+            self.Reparent(parent, keepGlobalTransform);
+        }
+        else {
+            parent.AddChild(self);
+        }
+        
         return self;
     }
 

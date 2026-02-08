@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Godot;
 using maidoc.Core;
+using maidoc.Core.Cards;
 using Vector2 = Godot.Vector2;
 
 namespace maidoc.Scenes.GameComponents;
@@ -178,5 +180,12 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
     public void AddCard(ICardSceneRoot card) {
         card.AsNode2D.AsChildOf(CardParent);
         card.FocusWrapper.GrabFocus();
+    }
+
+    public bool TryGetCard(SerialNumber serialNumber, [NotNullWhen(true)] out ICardSceneRoot? card) {
+        card = GetHandCards()
+            .SingleOrDefault(it => it.SerialNumber == serialNumber);
+
+        return card != null;
     }
 }

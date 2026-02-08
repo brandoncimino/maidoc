@@ -1,6 +1,8 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Godot;
 using maidoc.Core;
+using maidoc.Core.Cards;
 
 namespace maidoc.Scenes.GameComponents;
 
@@ -34,6 +36,10 @@ public partial class GraveyardSceneRoot : Node2D, ISceneRoot<GraveyardSceneRoot,
     };
 
     public void AddCard(ICardSceneRoot card) {
+        throw new NotImplementedException();
+    }
+
+    public bool TryGetCard(SerialNumber serialNumber, [NotNullWhen(true)] out ICardSceneRoot? card) {
         throw new NotImplementedException();
     }
 }
