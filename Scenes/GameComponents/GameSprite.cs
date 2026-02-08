@@ -23,7 +23,7 @@ public partial class GameSprite : Sprite2D {
                 .OfType<Control>()
                 .ForEach(secretRectangle => {
                         secretRectangle.Size =
-                            Texture.GetSize().NormalizeLargerAxis() * GodotHelpers.GodotUnitsPerMeter;
+                            Texture.GetSize().NormalizeLargerAxis() * GodotHelpers.GodotPixelsPerMeter;
                     }
                 );
         }

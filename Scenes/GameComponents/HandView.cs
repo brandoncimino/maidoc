@@ -91,7 +91,6 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
             return;
         }
 
-
         var cardHorizontalLayout = Lineup.LineupFromCenter(
             handCards.Select(it => it.UnscaledSize.X)
                      .ToImmutableArray()

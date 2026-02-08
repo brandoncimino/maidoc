@@ -59,7 +59,7 @@ public partial class CardSceneRoot : InteractiveSceneRoot2D<CardSceneRoot, CardS
 
     private void NormalizeSizes() {
         var desiredRectInMeters = GodotHelpers.Rect2ByCenter(
-            Position / GodotHelpers.GodotUnitsPerMeter,
+            Position / GodotHelpers.GodotPixelsPerMeter,
             CardSizeInMeters
         );
 

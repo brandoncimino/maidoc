@@ -100,8 +100,8 @@ public partial class RectMarker : Node2D {
     /// Based on <see cref="GodotHelpers.GodotUnitsPerMeter"/>
     /// </summary>
     public Vector2 SizeInMeters {
-        get => SizeInPixels / GodotHelpers.GodotUnitsPerMeter;
-        set => SizeInPixels = value * GodotHelpers.GodotUnitsPerMeter;
+        get => SizeInPixels / GodotHelpers.GodotPixelsPerMeter;
+        set => SizeInPixels = value * GodotHelpers.GodotPixelsPerMeter;
     }
 
     public Vector2 SizeInScreens {
@@ -140,8 +140,8 @@ public partial class RectMarker : Node2D {
 
     // 
     public Vector2 PositionInMeters {
-        get => PositionInPixels / GodotHelpers.GodotUnitsPerMeter;
-        set => PositionInPixels = value * GodotHelpers.GodotUnitsPerMeter;
+        get => PositionInPixels / GodotHelpers.GodotPixelsPerMeter;
+        set => PositionInPixels = value * GodotHelpers.GodotPixelsPerMeter;
     }
 
 
@@ -169,8 +169,8 @@ public partial class RectMarker : Node2D {
 
 
     public Vector2 OffsetInMeters {
-        get => OffsetInPixels / GodotHelpers.GodotUnitsPerMeter;
-        set => OffsetInPixels = value / GodotHelpers.GodotUnitsPerMeter;
+        get => OffsetInPixels / GodotHelpers.GodotPixelsPerMeter;
+        set => OffsetInPixels = value / GodotHelpers.GodotPixelsPerMeter;
     }
 
 
@@ -287,7 +287,7 @@ public partial class RectMarker : Node2D {
         }
 
         var globalRect         = rect.GetGlobalRect();
-        var globalSizeInMeters = globalRect.Size / GodotHelpers.GodotUnitsPerMeter;
+        var globalSizeInMeters = globalRect.Size / GodotHelpers.GodotPixelsPerMeter;
         label.Text = $"""
                       {Name}
                       🌍 {globalSizeInMeters.X:0.#} ⨉ {globalSizeInMeters.Y:0.#} m

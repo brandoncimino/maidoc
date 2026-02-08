@@ -36,13 +36,13 @@ public partial class MetersToPixelsEditor : EditorProperty {
 
     private void _OnValueChanged() {
         var meters = new Vector2((float)_xEntry.Value, (float)_yEntry.Value);
-        var pixels = meters * GodotHelpers.GodotUnitsPerMeter;
+        var pixels = meters * GodotHelpers.GodotPixelsPerMeter;
         EmitChanged(GetEditedProperty(), pixels);
     }
 
     public override void _UpdateProperty() {
         var pixels = GetEditedObject().Get(GetEditedProperty()).AsVector2();
-        var meters = pixels / GodotHelpers.GodotUnitsPerMeter;
+        var meters = pixels / GodotHelpers.GodotPixelsPerMeter;
         _xEntry.SetValueNoSignal(meters.X);
         _yEntry.SetValueNoSignal(meters.Y);
     }

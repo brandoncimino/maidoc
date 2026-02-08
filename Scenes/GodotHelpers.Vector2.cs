@@ -4,7 +4,7 @@ using Godot;
 namespace maidoc.Scenes;
 
 public partial class GodotHelpers {
-    public static Vector2 PositionInMeters(this Node2D node2D) => node2D.Position / GodotUnitsPerMeter;
+    public static Vector2 PositionInMeters(this Node2D node2D) => node2D.Position / GodotPixelsPerMeter;
 
     public static float GetAxis(in this Vector2 vector2, Vector2.Axis axis) => axis switch {
         Vector2.Axis.X => vector2.X,
