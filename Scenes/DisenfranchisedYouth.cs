@@ -50,4 +50,6 @@ public sealed class Disenfranchised<T> {
     public T Value => Enfranchised
         ? _value
         : throw new InvalidOperationException($"I have not been enfranchised with a {typeof(T)} value yet!");
+
+    public static implicit operator T(Disenfranchised<T> disenfranchised) => disenfranchised.Value;
 }
