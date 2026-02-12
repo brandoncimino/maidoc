@@ -7,17 +7,17 @@ namespace maidoc.Scenes.GameComponents;
 
 [Tool]
 public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, PlaymatSceneRoot.SpawnInput> {
-    private readonly Disenfranchised<Deck>               _deck      = new();
-    private readonly Disenfranchised<HandView>           _hand      = new();
-    private readonly Disenfranchised<BoardView>          _board     = new();
-    private readonly Disenfranchised<GraveyardSceneRoot> _graveyard = new();
+    private readonly Disenfranchised<Deck>          _deck      = new();
+    private readonly Disenfranchised<HandView>      _hand      = new();
+    private readonly Disenfranchised<BoardView>     _board     = new();
+    private readonly Disenfranchised<ICardZoneNode> _graveyard = new();
 
     private readonly PlaymatLayout _layout = PlaymatLayout.Default();
 
-    public BoardView          Board     => _board.Value;
-    public HandView           Hand      => _hand.Value;
-    public Deck               Deck      => _deck.Value;
-    public GraveyardSceneRoot Graveyard => _graveyard.Value;
+    public BoardView     Board     => _board.Value;
+    public HandView      Hand      => _hand.Value;
+    public Deck          Deck      => _deck.Value;
+    public ICardZoneNode Graveyard => _graveyard.Value;
 
     private readonly Disenfranchised<PlayerId> _playerId = new();
     public           PlayerId                  PlayerId => _playerId.Value;
@@ -157,7 +157,7 @@ public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, Pla
                     new Deck.SpawnInput() {
                         PlayerId             = spawnInput.PlayerId,
                         OnZoneClick          = spawnInput.OnZoneClick,
-                        UnscaledSizeInMeters = deckRect.Size.Meters
+                        UnscaledSizeInMeters = deckRect.Size.Meters,
                     }
                 )
                 .Named($"{spawnInput.PlayerId} Deck")
@@ -167,12 +167,15 @@ public partial class PlaymatSceneRoot : Node2D, ISceneRoot<PlaymatSceneRoot, Pla
 
     private void SpawnGraveyard(SpawnInput spawnInput, RectDistance graveyardRect) {
         _graveyard.Enfranchise(() =>
-            this.SpawnChild<GraveyardSceneRoot, GraveyardSceneRoot.SpawnInput>(
-                new() {
-                    PlayerId     = spawnInput.PlayerId,
-                    UnscaledSize = graveyardRect.Size
+            CardZoneNode.Spawn(
+                new ZoneSpawnInput() {
+                    ZoneRect = graveyardRect,
+                    ZoneAddress = new ZoneAddress() {
+                        PlayerId = spawnInput.PlayerId,
+                        ZoneId   = DuelDiskZoneId.Graveyard
+                    }
                 }
-            ).AtPosition(graveyardRect.Position)
+            )
         );
     }
 

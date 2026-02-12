@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Godot;
@@ -27,6 +25,8 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
 
     private readonly Disenfranchised<Distance2D> _unscaledSize = new();
     public           Distance2D                  UnscaledSize => _unscaledSize.Value;
+
+    private ImmutableArray<ICardSceneRoot> _myCards = [];
 
     public bool FaceDown { get; set; } = true;
 
@@ -77,8 +77,7 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
     ///       - It is theoretically slower than tracking them ourselves
     /// </summary>
     /// <returns></returns>
-    private IEnumerable<ICardSceneRoot> GetHandCards() => CardParent.EnumerateChildren(1)
-                                                                    .OfType<ICardSceneRoot>();
+    private ImmutableArray<ICardSceneRoot> GetHandCards() => _myCards;
 
     [ExportToolButton(nameof(OrganizeCards))]
     private Callable OrganizeCardsToolButton => Callable.From(OrganizeCards);
@@ -87,7 +86,7 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
         GD.Print($"Organizing cards in {Name} (reason: {_needsReorganizing})");
         _needsReorganizing = null;
 
-        var handCards = GetHandCards().ToImmutableArray();
+        var handCards = GetHandCards();
 
         if (handCards.Length == 0) {
             return;
@@ -105,9 +104,10 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
         var handTop    = -handBottom;
 
         for (var i = 0; i < handCards.Length; i++) {
-            var card = handCards[i];
+            var card      = handCards[i];
+            var isFocused = card.IsFocused;
 
-            var cardVerticalLine = card.IsFocused switch {
+            var cardVerticalLine = isFocused switch {
                 true => LineDistance.ByEndAndSize(
                     handBottom,
                     card.UnscaledSize.Y
@@ -125,6 +125,11 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
 
             card.AnimatePosition(targetPosition);
 
+            if (isFocused) {
+                // Makes that card the lattermost one among its siblings, causing it to be rendered on top of them.
+                this.MoveChild(card.AsNode2D, -1);
+            }
+
             var neighbors = i.GetNeighbors(handCards.Length, _boundaryNavigation);
 
             GodotHelpers.ConfigureLinearNavigation(
@@ -140,23 +145,6 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
         foreach (var card in GetHandCards()) {
             card.FaceDown = faceDown;
         }
-    }
-
-    [Pure]
-    public static (float start, float interval) CalculateLayoutFromCenter(
-        float availableSpace,
-        float sizePerItem,
-        int   itemCount,
-        float itemCenter01 = .5f
-    ) {
-        var totalItemSize = sizePerItem * itemCount;
-        if (totalItemSize <= availableSpace) {
-            var start = -(totalItemSize / 2) + itemCenter01 * sizePerItem;
-            return (start, sizePerItem);
-        }
-
-        var interval = availableSpace / sizePerItem;
-        return (-availableSpace       / 2, availableSpace / sizePerItem);
     }
 
     public void FocusOnFirstCard() {
@@ -178,8 +166,13 @@ public partial class HandView : Node2D, ISceneRoot<HandView, HandView.SpawnInput
     };
 
     public void AddCard(ICardSceneRoot card) {
+        _myCards += card;
         card.AsNode2D.AsChildOf(CardParent);
         card.FocusWrapper.GrabFocus();
+    }
+
+    public void RemoveCard(ICardSceneRoot card) {
+        _myCards = _myCards.Remove(card);
     }
 
     public bool TryGetCard(SerialNumber serialNumber, [NotNullWhen(true)] out ICardSceneRoot? card) {

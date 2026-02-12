@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Godot;
 using maidoc.Core;
 using maidoc.Core.Cards;
@@ -8,35 +7,24 @@ using maidoc.Core.Cards;
 namespace maidoc.Scenes.GameComponents;
 
 public partial class Deck : Node2D, ISceneRoot<Deck, Deck.SpawnInput>, ICardZoneNode {
-    private readonly Disenfranchised<Node2D>  _cardHolder = new();
-    private readonly Disenfranchised<Control> _clickBox   = new();
+    private readonly Disenfranchised<Control> _clickBox = new();
 
-    private readonly Disenfranchised<ZoneAddress> _zoneAddress = new();
-    public           ZoneAddress                  ZoneAddress => _zoneAddress.Value;
+    private readonly Disenfranchised<CardZoneBehavior> _behavior = new();
+    public           ZoneAddress                       ZoneAddress => _behavior.Value.ZoneAddress;
 
     public Node2D AsNode2D => this;
 
-    private readonly Disenfranchised<Distance2D> _unscaledSize = new();
-    public           Distance2D                  UnscaledSize => _unscaledSize.Value;
+    public Distance2D UnscaledSize => _behavior.Value.UnscaledSize;
 
     public Deck InitializeSelf(SpawnInput input) {
-        _zoneAddress.Enfranchise(
-            new ZoneAddress() {
-                PlayerId = input.PlayerId,
-                ZoneId   = DuelDiskZoneId.Deck
-            }
-        );
-
-        _unscaledSize.Enfranchise(input.UnscaledSizeInMeters.Meters);
-
-        _cardHolder.Enfranchise(() => {
-                var node = new Node2D() {
-                    Name = "Cards"
-                }.AsChildOf(this);
-
-                node.Position = default;
-                node.Scale    = Vector2.One;
-                return node;
+        _behavior.Enfranchise(() =>
+            new CardZoneBehavior() {
+                AsNode2D     = this,
+                UnscaledSize = input.UnscaledSizeInMeters.Meters,
+                ZoneAddress = new ZoneAddress() {
+                    ZoneId   = DuelDiskZoneId.Deck,
+                    PlayerId = input.PlayerId
+                }
             }
         );
 
@@ -57,7 +45,7 @@ public partial class Deck : Node2D, ISceneRoot<Deck, Deck.SpawnInput>, ICardZone
     }
 
     public void AddCard(ICardSceneRoot card) {
-        _cardHolder.Value.AddChild(card.AsNode2D);
+        _behavior.Value.AddCard(card);
 
         card.AnimatePosition(
             this.Center,
@@ -70,11 +58,7 @@ public partial class Deck : Node2D, ISceneRoot<Deck, Deck.SpawnInput>, ICardZone
     }
 
     public bool TryGetCard(SerialNumber serialNumber, [NotNullWhen(true)] out ICardSceneRoot? card) {
-        card = _cardHolder.Value
-                          .EnumerateChildren(1)
-                          .OfType<ICardSceneRoot>()
-                          .SingleOrDefault(it => it.SerialNumber == serialNumber);
-        return card != null;
+        return _behavior.Value.TryGetCard(serialNumber, out card);
     }
 
     public static Deck InstantiateRawScene() {
